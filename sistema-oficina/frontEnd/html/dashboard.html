@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumo</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/paginas/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <h1 class="titulo-dashboard">Resumo</h1>
+        <!--cards-->
+        <div class="cards">
+            <div class="card">
+                <h2>Cliente</h2>
+                <p>120</p>
+            </div>
+            <div class="card">
+                <h2>Serviço em andamento</h2>
+                <p>8</p>
+            </div>
+            <div class="card">
+                <h2>Estoque</h2>
+                <p>47 itens</p>
+            </div>
+            <div class="card">
+                <h2>Serviços concluídos</h2>
+                <p>230</p>
+            </div>
+        </div>
+
+        <!--tabela-->
+        <div class="tabela-historico">
+            <h2 class="titulo-grafico">Últimos Serviços Realizados</h2>
+            <table id="historicoServicos">
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Descrição</th>
+                        <th>Data</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+
+        <!--gráfico-->
+        <div class="grafico">
+            <h2 class="titulo-grafico">Serviço por mês</h2>
+            <canvas id="graficoServicos" width="400" height="150"></canvas>
+        </div>
+    </div>
+    
+    
+    
+    <script src="../js/js paginas/dashboard.js"></script>
+</body>
+</html>

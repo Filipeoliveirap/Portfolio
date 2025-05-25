@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oficina do junio</title>
+    <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" href="../css/global.css">
+    
+    
+
+
+
+
+
+
+
+
+
+</head>
+<body>
+    <div class="container">
+        <!--sidebar-->
+        <nav class="sidebar">
+            <div class="sidebar-topo">
+                <h2>Oficina</h2>
+                <ul>
+                    <li onclick="carregarPagina('dashboard')"><i class="fas fa-chart-line"></i> Resumo</li>
+                    <li onclick="carregarPagina('clientes')"><i class="fas fa-users"></i> Clientes</li>
+                    <li onclick="carregarPagina('servicos')"><i class="fas fa-tools"></i> Serviços</li>
+                    <li onclick="carregarPagina('estoque')"><i class="fas fa-boxes"></i> Estoque</li>
+                    <li onclick="carregarPagina('relatorios')"><i class="fas fa-file-alt"></i> Relatórios</li>
+                </ul>                
+            </div>
+            
+            <div id="btnFechar" class="botao-sair">
+                <button id="btnFechar">Fechar</button>
+            </div>
+        </nav>
+
+        <!--área principal-->
+        <main class="conteudo">
+            <iframe id="conteudo-frame" src="../html/dashboard.html" frameborder="0"></iframe>
+        </main>
+
+    </div>
+
+    <script src="../js/renderer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+</html>

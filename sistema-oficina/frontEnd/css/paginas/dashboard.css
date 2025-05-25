@@ -1,0 +1,94 @@
+.dashboar-container {
+    padding: 30px;
+    font-family: 'Inter', sans-serif;
+    color: var(--cor-primaria);
+}
+
+.dashboar-container h1 {
+    margin-bottom: 30px;
+    font-size: 28px;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px
+}
+
+.card {
+    background-color: #ffffff;
+    padding: 20px;
+    border-left: 6px solid var(--cor-primaria);
+    box-shadow: 0 2px 6px rgb(0, 0, 0, 0.08);
+    border-radius: 8px;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+}
+
+.card h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: var(--cor-primaria);
+}
+
+.card p {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.titulo-dashboard {
+    font-size: 28px;
+    margin-bottom: 20px;
+
+}
+
+.titulo-grafico {
+    font-size: 28px;
+    margin-top: 20px;
+}
+
+.tabela-historico {
+    margin-top: 30px;
+}
+
+.tabela-historico h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: var(--cor-primaria);
+}
+
+#historicoServicos {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    box-shadow: 0 2px 6px rgb(0, 0, 0, 0.08);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#historicoServicos th, #historicoServicos td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+#historicoServicos th {
+    background-color: var(--cor-primaria);
+    color: #fff;
+    font-weight: bold;
+}
+
+#historicoServicos tr:hover {
+    background-color: #f9f9f9;
+}
+
+#historicoServicos th:nth-child(4),
+#historicoServicos td:nth-child(4) {
+    width: 15%; 
+}

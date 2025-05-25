@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="Pt-br">
+
+<head>
+  <!-- Definindo o tipo de documento como HTML5 e a linguagem como português do Brasil -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Caféteria Salento</title>
+
+  <!-- Incluindo o arquivo CSS do Bootstrap para estilização -->
+  <link href="./node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+  <!-- Incluindo um arquivo CSS personalizado para o rodapé -->
+  <link rel="stylesheet" href="./css/footer.css">
+
+  <!-- Incluindo o Font Awesome para usar ícones -->
+  <link href="./node_modules/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet" />
+  
+  <!-- Fonte Google usada no documento -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+
+  <!-- MDB (Material Design Bootstrap) para mais estilizações e componentes -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" rel="stylesheet" />
+</head>
+
+<body>
+  <header>
+    <!-- Navbar fixa no topo com animação ao rolar a página -->
+    <nav class="navbar navbar-expand-lg fixed-top navbar-scroll" data-mdb-navbar-init>
+      <div class="container-fluid">
+        <!-- Botão para colapsar a navbar em dispositivos menores -->
+        <button class="navbar-toggler ps-0" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarExample01" aria-controls="navbarExample01" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="d-flex justify-content-start align-items-center">
+            <!-- Ícone do menu de barras -->
+            <i class="fas fa-bars"></i>
+          </span>
+        </button>
+        
+        <!-- Logo e link para a página inicial -->
+        <a class="navbar-brand text-light" href="#">Salento.</a>
+
+        <!-- Links do menu, que colapsam em telas pequenas -->
+        <div class="collapse navbar-collapse" id="navbarExample01">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item active">
+              <!-- Link para o início -->
+              <a class="nav-link text-light" aria-current="page" href="index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <!-- Link para o cardápio -->
+              <a class="nav-link text-light" href="cardapio.html">Cardápio</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Imagem de fundo com uma sobreposição escura e texto centralizado -->
+    <div id="intro" class="bg-image" style="background-image: url('https://images.unsplash.com/reserve/DHHQbqc0RrWVf0uDNe5E_The%20Litte%20Cafe.jpg?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); height: 100vh;">
+      <div class="mask text-white" style="background-color: rgba(0, 0, 0, 0.8)">
+        <div class="container d-flex align-items-center text-center h-100">
+          <!-- Título e descrição -->
+          <div>
+            <h1 class="mb-5">Salento. Café</h1>
+            <p>
+              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Officiis molestiae laboriosam numquam expedita ullam saepe ipsam, deserunt provident corporis, sit non accusamus maxime, magni nulla quasi iste ipsa architecto? Autem!
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Conteúdo principal da página -->
+  <main class="p-4">
+    <!-- manipulação de data e hora, e botões -->
+    <!-- 
+    <div class="container">
+      <p id="hora"></p>
+      <p id="data"></p>
+      <button type="button" id="iniciar" name="iniciar" class="btn btn-primary">Iniciar</button>
+      <button type="button" id="parar" name="parar" class="btn btn-danger">Parar</button>
+      <p id="mensagem"></p>
+    </div> 
+    -->
+
+    <div class="container">
+      <!-- Container vazio onde os cards de produtos podem ser inseridos dinamicamente -->
+      <div id="cards" class="row">
+      </div>
+    </div>
+  </main>
+
+  <!-- Rodapé da página com links para redes sociais -->
+  <footer class="text-center bg-body-tertiary">
+    <div class="container pt-4">
+      <!-- Seção de redes sociais -->
+      <section class="mb-4">
+        <!-- Botões de redes sociais -->
+        <a data-mdb-ripple-init class="btn btn-link btn-floating btn-lg text-body m-1" href="#!" role="button" data-mdb-ripple-color="dark"><i class="fab fa-facebook-f"></i></a>
+        <a data-mdb-ripple-init class="btn btn-link btn-floating btn-lg text-body m-1" href="#!" role="button" data-mdb-ripple-color="dark"><i class="fab fa-twitter"></i></a>
+        <a data-mdb-ripple-init class="btn btn-link btn-floating btn-lg text-body m-1" href="#!" role="button" data-mdb-ripple-color="dark"><i class="fab fa-google"></i></a>
+        <a data-mdb-ripple-init class="btn btn-link btn-floating btn-lg text-body m-1" href="#!" role="button" data-mdb-ripple-color="dark"><i class="fab fa-instagram"></i></a>
+        <a data-mdb-ripple-init class="btn btn-link btn-floating btn-lg text-body m-1" href="#!" role="button" data-mdb-ripple-color="dark"><i class="fab fa-linkedin"></i></a>
+        <a data-mdb-ripple-init class="btn btn-link btn-floating btn-lg text-body m-1" href="#!" role="button" data-mdb-ripple-color="dark"><i class="fab fa-github"></i></a>
+      </section>
+    </div>
+
+    <!-- Copyright -->
+    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.05);">
+      © 2020 Copyright:
+      <a class="text-body" href="https://mdbootstrap.com/">MDBootstrap.com</a>
+    </div>
+  </footer>
+
+  <!-- JavaScript e bibliotecas Bootstrap e MDB -->
+  <script src="./js/cafeteria.js"></script>
+  <script src="./node_modules/@popperjs/core/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+  <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="./node_modules/mdbootstrap/js/mdb.min.js"></script>
+  <script type="text/javascript" src="./node_modules/mdbootstrap/js/jquery.min.js"></script>
+</body>
+
+</html>

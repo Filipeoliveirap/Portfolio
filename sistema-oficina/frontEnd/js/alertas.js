@@ -33,3 +33,10 @@ async function confirmarAcao(mensagem = 'Deseja realmente continuar?') {
     });
     return resultado.isConfirmed;
 }
+
+function alertaCpfExistente(cpf) {
+    alertaErro(
+        'CPF já cadastrado',
+        `O cliente com CPF ${cpf} já possui cadastro no sistema.`
+    );
+}

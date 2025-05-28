@@ -47,17 +47,29 @@ public class ProdutoService {
         return toDTO(produto);
     }
 
-    // Atualiza produto existente pelo id
     public ProdutoDTO atualizar(Long id, ProdutoDTO dto) {
         Produto produtoExistente = produtoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado com id: " + id));
+
         produtoExistente.setNome(dto.getNome());
         produtoExistente.setQuantidade(dto.getQuantidade());
         produtoExistente.setPrecoUnitario(dto.getPrecoUnitario());
         produtoExistente.setCategoria(dto.getCategoria());
         produtoExistente.setObservacao(dto.getObservacao());
-        produtoExistente = produtoRepository.save(produtoExistente);
-        return toDTO(produtoExistente);
+
+        Produto salvo = produtoRepository.save(produtoExistente);
+        return toDTO(salvo);
+    }
+
+    private ProdutoDTO converterParaDTO(Produto produto) {
+        ProdutoDTO dto = new ProdutoDTO();
+        dto.setId(produto.getId());
+        dto.setNome(produto.getNome());
+        dto.setQuantidade(produto.getQuantidade());
+        dto.setPrecoUnitario(produto.getPrecoUnitario());
+        dto.setCategoria(produto.getCategoria());
+        dto.setObservacao(produto.getObservacao());
+        return dto;
     }
 
     // Exclui produto pelo id

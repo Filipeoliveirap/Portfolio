@@ -27,6 +27,10 @@ public class ServicoFinalizado {
 
     private String observacoes;
 
+    @ManyToOne
+    private Cliente cliente;
+
+
     // Getters e setters
 
     public Long getId() {
@@ -88,4 +92,9 @@ public class ServicoFinalizado {
     public void setObservacoes(String observacoes) {
         this.observacoes = observacoes;
     }
+
+    public Cliente getCliente() {return cliente;}
+
+    public void setCliente(Cliente cliente) {this.cliente = cliente;}
+
 }

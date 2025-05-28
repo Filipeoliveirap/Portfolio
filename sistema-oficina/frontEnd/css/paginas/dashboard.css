@@ -1,12 +1,13 @@
-.dashboar-container {
+.dashboard-container {
     padding: 30px;
     font-family: 'Inter', sans-serif;
     color: var(--cor-primaria);
 }
 
-.dashboar-container h1 {
-    margin-bottom: 30px;
+.dashboard-container h1,
+.titulo-dashboard {
     font-size: 28px;
+    margin-bottom: 30px;
     border-bottom: 2px solid #ddd;
     padding-bottom: 10px;
 }
@@ -14,16 +15,16 @@
 .cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px
+    gap: 20px;
 }
 
 .card {
     background-color: #ffffff;
     padding: 20px;
     border-left: 6px solid var(--cor-primaria);
-    box-shadow: 0 2px 6px rgb(0, 0, 0, 0.08);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
     border-radius: 8px;
-    transition: transform 0.2s;
+    transition: transform 0.2s ease-in-out;
 }
 
 .card:hover {
@@ -38,19 +39,14 @@
 
 .card p {
     font-size: 24px;
-    font-weight: bold;
+    font-weight: 700;
     margin: 0;
-}
-
-.titulo-dashboard {
-    font-size: 28px;
-    margin-bottom: 20px;
-
 }
 
 .titulo-grafico {
     font-size: 28px;
-    margin-top: 20px;
+    margin-top: 40px;
+    color: var(--cor-primaria);
 }
 
 .tabela-historico {
@@ -67,13 +63,14 @@
     width: 100%;
     border-collapse: collapse;
     background-color: #ffffff;
-    box-shadow: 0 2px 6px rgb(0, 0, 0, 0.08);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
     border-radius: 8px;
     overflow: hidden;
 }
 
-#historicoServicos th, #historicoServicos td {
-    padding: 12px;
+#historicoServicos th, 
+#historicoServicos td {
+    padding: 12px 15px;
     text-align: left;
     border-bottom: 1px solid #ddd;
 }
@@ -81,13 +78,14 @@
 #historicoServicos th {
     background-color: var(--cor-primaria);
     color: #fff;
-    font-weight: bold;
+    font-weight: 700;
 }
 
 #historicoServicos tr:hover {
     background-color: #f9f9f9;
 }
 
+/* Se futuramente adicionar colunas a mais, controla a largura da última */
 #historicoServicos th:nth-child(4),
 #historicoServicos td:nth-child(4) {
     width: 15%; 

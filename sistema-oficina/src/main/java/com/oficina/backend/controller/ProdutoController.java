@@ -76,4 +76,11 @@ public class ProdutoController {
         erro.put("status", 404);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
     }
+
+    // Atualizar produto
+    @PutMapping("/{id}")
+    public ResponseEntity<ProdutoDTO> atualizar(@PathVariable Long id, @RequestBody @Valid ProdutoDTO dto) {
+        ProdutoDTO atualizado = produtoService.atualizar(id, dto);
+        return ResponseEntity.ok(atualizado);
+    }
 }

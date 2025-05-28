@@ -21,7 +21,7 @@ public class ServicoDTO {
         this.id = servico.getId();
         this.descricao = servico.getDescricao();
         this.preco = servico.getPreco();
-        this.data = servico.getData();
+        this.data = servico.getData() != null ? servico.getData().toLocalDate() : null;
         this.cliente = new ClienteResumidoDTO(servico.getCliente());
     }
 }

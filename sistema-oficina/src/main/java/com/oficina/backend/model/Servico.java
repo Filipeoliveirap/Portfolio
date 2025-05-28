@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +29,7 @@ public class Servico {
 
     @NotNull(message = "A data do serviço é obrigatória")
     @Column(columnDefinition = "DATETIME")
-    private LocalDate data;
+    private LocalDateTime data;
 
     @ManyToOne
     @JoinColumn(name = "cliente_id")

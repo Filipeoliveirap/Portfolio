@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         tabelaServicos.innerHTML = '';
         if (servicos.length === 0) {
-            tabelaServicos.innerHTML = '<tr><td colspan="6" class="text-center p-4">Nenhum serviço encontrado.</td></tr>';
+            tabelaServicos.innerHTML = '<tr><td colspan="6" class="text-center p-4">Nenhum serviço cadastrado.</td></tr>';
             return;
         }
 

@@ -10,6 +10,13 @@ function formatarDataBrasileira(dataIso) {
   });
 }
 
+function formatarDataParaEnvio(dataString) {
+  if (!dataString) return "";
+  const [ano, mes, dia] = dataString.split("-");
+  return `${ano}-${mes}-${dia}`;
+}
+
+
 let filtrosAtuais = {
   termo: '',
   inicio: '',
@@ -25,17 +32,8 @@ buscarServicosFinalizados();
 
 async function buscarServicosFinalizados() {
   filtrosAtuais.termo = inputPesquisa.value.trim();
-  filtrosAtuais.inicio = document.getElementById('data-inicio').value;
-  
-  const dataFimInput = document.getElementById('data-fim').value;
-  if (dataFimInput) {
-    const dt = new Date(dataFimInput);
-    dt.setHours(23, 59, 59, 999); // Final do dia para incluir toda a data fim
-    filtrosAtuais.fim = dt.toISOString().split('T')[0];
-  } else {
-    filtrosAtuais.fim = '';
-  }
-
+  filtrosAtuais.inicio = formatarDataParaEnvio(document.getElementById('data-inicio').value);
+  filtrosAtuais.fim = formatarDataParaEnvio(document.getElementById('data-fim').value);
   filtrosAtuais.periodo = document.getElementById('filtro-periodo').value;
 
   const url = new URL("http://localhost:8080/servicos-finalizados");

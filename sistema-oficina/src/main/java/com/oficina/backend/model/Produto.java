@@ -7,11 +7,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import java.math.BigDecimal;
-import java.util.List;
+
 
 @Entity
 @Data
-
 public class Produto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +27,9 @@ public class Produto {
     @DecimalMin(value = "0.0", inclusive = false, message = "O preço deve ser maior que zero")
     private BigDecimal precoUnitario;
 
-    @ManyToMany(mappedBy = "produtos")
-    private List<Servico> servicos;
+    @NotBlank(message = "A categoria é obrigatória")
+    private String categoria;
+    private String observacao;
+
+
 }

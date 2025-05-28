@@ -8,12 +8,15 @@ import com.oficina.backend.service.ProdutoService;
 import com.oficina.backend.service.ServicoFinalizadoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,8 +34,8 @@ public class RelatorioController {
     @GetMapping("/servicos-finalizados")
     public ResponseEntity<byte[]> gerarRelatorioServicosFinalizadosFiltrado(
             @RequestParam(required = false) String termo,
-            @RequestParam(required = false) String inicio,
-            @RequestParam(required = false) String fim,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fim,
             @RequestParam(required = false) String periodo
     ) {
         List<ServicoFinalizado> servicosFiltrados =

@@ -39,7 +39,7 @@ public class ServicoController {
         Servico servico = new Servico();
         servico.setDescricao(dto.getDescricao());
         servico.setPreco(dto.getPreco());
-        servico.setData(dto.getData());
+        servico.setData(dto.getData().atStartOfDay());
         servico.setCliente(cliente); // associando cliente completo
 
         servico = servicoRepository.save(servico);

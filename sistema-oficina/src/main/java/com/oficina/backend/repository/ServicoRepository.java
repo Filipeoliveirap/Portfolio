@@ -1,5 +1,8 @@
 package com.oficina.backend.repository;
+import com.oficina.backend.model.Produto;
 import com.oficina.backend.model.Servico;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -9,7 +12,6 @@ import java.util.List;
 
 public interface ServicoRepository extends JpaRepository<Servico, Long>{
     List<Servico> findByDescricaoContainingIgnoreCaseOrClienteCpfContaining(String descricao, String cpf);
-
     List<Servico> findByClienteId(Long clienteId);
     List<Servico> findByCliente_NomeContainingIgnoreCase(String nome);
     List<Servico> findByDescricaoContainingIgnoreCase(String descricao);

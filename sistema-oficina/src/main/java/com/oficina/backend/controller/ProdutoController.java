@@ -1,78 +1,79 @@
 package com.oficina.backend.controller;
 
-import com.oficina.backend.model.Produto;
+import com.oficina.backend.DTO.ProdutoDTO;
 import com.oficina.backend.service.ProdutoService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/produtos")
 public class ProdutoController {
+
     @Autowired
     private ProdutoService produtoService;
 
-    //criar produto
+    // Criar produto
     @PostMapping
-    public ResponseEntity<Produto> criar(@RequestBody @Valid Produto produto) {
-        Produto salvo = produtoService.salvar(produto);
-        return ResponseEntity.ok(salvo);
+    public ResponseEntity<ProdutoDTO> criar(@RequestBody @Valid ProdutoDTO dto) {
+        ProdutoDTO salvo = produtoService.salvar(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
     }
 
-    //listar todos os produtos
+    // Listar produtos com paginação e filtro por nome ou categoria
     @GetMapping
-    public ResponseEntity<List<Produto>> listarTodos() {
-        return ResponseEntity.ok(produtoService.listarTodos());
+    public ResponseEntity<Page<ProdutoDTO>> listarProdutos(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "nome") String sortBy,
+            @RequestParam(required = false) String filtro,
+            @RequestParam(defaultValue = "nome") String tipoFiltro) {
+
+        Page<ProdutoDTO> produtos = produtoService.listarTodos(page, size, sortBy, filtro, tipoFiltro);
+        return ResponseEntity.ok(produtos);
     }
 
-    //buscar por id
+    // Buscar por ID
     @GetMapping("/{id}")
-    public ResponseEntity<Produto> buscarPorId(@PathVariable Long id) {
-        Optional<Produto> produto = produtoService.buscarPorId(id);
-        return produto.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<ProdutoDTO> buscarPorId(@PathVariable Long id) {
+        ProdutoDTO dto = produtoService.buscarPorId(id);
+        return ResponseEntity.ok(dto);
     }
 
-    //buscar por nome
-    @GetMapping("/buscar")
-    public ResponseEntity<List<Produto>> buscarPorNome(@RequestParam String nome) {
-        return ResponseEntity.ok(produtoService.buscarPorNome(nome));
-    }
-
-    //atualizar produto
-    @PutMapping("/{id}")
-    public ResponseEntity<Produto> atualizar(@PathVariable Long id, @RequestBody @Valid Produto produtoAtualizado) {
-        try {
-            Produto atualizado = produtoService.atualizar(id, produtoAtualizado);
-            return ResponseEntity.ok(atualizado);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    //deletar produto
+    // Deletar produto
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
-        produtoService.deletar(id);
+        produtoService.excluir(id);
         return ResponseEntity.noContent().build();
     }
 
-    //buscar por estoque baixo
+    // Buscar produtos com estoque baixo
     @GetMapping("/estoque-baixo")
-    public ResponseEntity<?> buscarPorEstoqueBaixo(@RequestParam int quantidadeMinima) {
-        List<Produto> produtos = produtoService.buscarPorEstoqueBaixo(quantidadeMinima);
-
-        if(produtos.isEmpty()) {
+    public ResponseEntity<?> buscarPorEstoqueBaixo(@RequestParam int quantidadeLimite) {
+        List<ProdutoDTO> produtos = produtoService.produtosComEstoqueBaixo(quantidadeLimite);
+        if (produtos.isEmpty()) {
             Map<String, Object> resposta = new HashMap<>();
-            resposta.put("mensagem", "Nenhum produto com estoque baixo de " + quantidadeMinima);
+            resposta.put("mensagem", "Nenhum produto com estoque abaixo de " + quantidadeLimite);
             resposta.put("status", 404);
-            return ResponseEntity.status(404).body(resposta);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resposta);
         }
-        return ResponseEntity.ok(produtoService.buscarPorEstoqueBaixo(quantidadeMinima));
+        return ResponseEntity.ok(produtos);
+    }
+
+    // Tratamento local para EntityNotFoundException
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleNotFound(EntityNotFoundException ex) {
+        Map<String, Object> erro = new HashMap<>();
+        erro.put("mensagem", ex.getMessage());
+        erro.put("status", 404);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
     }
 }

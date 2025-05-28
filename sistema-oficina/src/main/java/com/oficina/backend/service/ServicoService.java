@@ -151,7 +151,7 @@ public class ServicoService {
         Servico servico = new Servico();
         servico.setDescricao(dto.getDescricao());
         servico.setPreco(dto.getPreco());
-        servico.setData(dto.getData());
+        servico.setData(dto.getData().atStartOfDay());
         servico.setCliente(cliente);
 
         return servicoRepository.save(servico);

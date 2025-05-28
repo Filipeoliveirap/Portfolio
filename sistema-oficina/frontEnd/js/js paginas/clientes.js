@@ -55,13 +55,25 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             const dados = await response.json();
             console.log('Dados recebidos:', dados);
-    
+
             tbody.innerHTML = '';
-    
+
+            // Se não houver clientes no conteúdo, mostra mensagem na tabela
+            if (!dados.content || dados.content.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center p-4">
+                            Nenhum cliente cadastrado.
+                        </td>
+                    </tr>
+                `;
+                return; // sai da função, pois não tem mais o que mostrar
+            }
+
             dados.content.forEach(cliente => {
                 const row = document.createElement('tr');
                 row.setAttribute('data-id', cliente.id);
-                
+
                 row.innerHTML = `
                     <td class="px-5 py-3 border-b text-sm">${cliente.nome}</td>
                     <td class="px-5 py-3 border-b text-sm">${cliente.cpf}</td>
@@ -77,16 +89,18 @@ document.addEventListener('DOMContentLoaded', function () {
                         </button>
                     </td>
                 `;
-                
+
                 tbody.appendChild(row);
             });
-    
+
             atualizarPaginacao(dados.totalPages);
+
         } catch (error) {
             console.error('Erro:', error.message);
             await alertaErro('Erro ao carregar cliente', 'Não foi possível carregar os dados do cliente.');
         }
     }
+
 
     function atualizarPaginacao(totalPaginas) {
         const paginacao = document.getElementById('paginacao');

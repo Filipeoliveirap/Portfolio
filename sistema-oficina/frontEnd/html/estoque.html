@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Estoque</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-6">
+    <h1 class="text-2xl font-semibold text-blue-600 mb-8">Estoque</h1>
+
+    <div class="bg-white shadow-md rounded-lg p-6 mb-8">
+        <div class="flex flex-col md:flex-row items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-gray-700">Lista de Produtos em Estoque</h2>
+            <div class="flex items-center space-x-4">
+                <input
+                    type="text"
+                    id="pesquisar-estoque"
+                    placeholder="Pesquisar Produto..."
+                    class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                />
+
+                <select id="tipo-filtro-estoque" class="border border-gray-300 rounded-md p-2 text-sm">
+                    <option value="nome" selected>Nome</option>
+                    <option value="categoria">Categoria</option>
+                </select>
+
+                <button
+                    id="btn-buscar-estoque"
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md shadow-md focus:outline-none focus:shadow-outline"
+                >
+                    <i class="fas fa-search"></i> Pesquisar
+                </button>
+            </div>
+        </div>
+        <div class="overflow-x-auto">
+            <table id="tabela-produtos" class="min-w-full leading-normal shadow-md rounded-lg overflow-hidden">
+                <thead class="bg-gray-200 text-gray-700">
+                    <tr>
+                        <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Produto</th>
+                        <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Quantidade</th>
+                        <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Preço Unitário</th>
+                        <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Preço Total</th>
+                        <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Categoria</th>
+                        <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Observação</th>
+                        <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Ações</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white">
+                    <!-- Linhas de estoque serão inseridas aqui dinamicamente -->
+                </tbody>
+            </table>
+        </div>
+
+        <div id="paginacao-estoque" class="flex justify-center mt-6 space-x-2"></div>
+
+        <div class="mt-4">
+            <button
+                class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md shadow-md focus:outline-none focus:shadow-outline"
+                onclick="window.location.href = 'estoqueCadastro.html'"
+                id="adicionar-estoque-btn"
+            >
+                <i class="fas fa-plus"></i> Adicionar Produto
+            </button>
+        </div>
+    </div>
+
+    <script src="../js/js paginas/estoque.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../js/alertas.js"></script>
+</body>
+</html>

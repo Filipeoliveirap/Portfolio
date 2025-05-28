@@ -6,9 +6,13 @@ import com.oficina.backend.service.ServicoFinalizadoService;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -46,13 +50,16 @@ public class ServicoFinalizadoController {
     @GetMapping
     public ResponseEntity<List<ServicoFinalizado>> listarServicosFinalizados(
             @RequestParam(required = false) String termo,
-            @RequestParam(required = false) String inicio,
-            @RequestParam(required = false) String fim,
-            @RequestParam(required = false) String periodo
-    ) {
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fim,
+            @RequestParam(required = false) String periodo) {
+
         List<ServicoFinalizado> servicos = servicoFinalizadoService.buscarServicosFinalizados(termo, inicio, fim, periodo);
         return ResponseEntity.ok(servicos);
     }
+
+
+
 
     @PatchMapping("/{id}")
     public ResponseEntity<ServicoFinalizado> atualizarObservacao(@PathVariable Long id, @RequestBody ServicoFinalizado dadosAtualizados) {

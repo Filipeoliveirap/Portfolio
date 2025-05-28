@@ -1,16 +1,12 @@
 package com.oficina.backend.repository;
 
-import com.oficina.backend.model.Servico;
 import com.oficina.backend.model.ServicoFinalizado;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -21,6 +17,6 @@ public interface ServicoFinalizadoRepository extends JpaRepository<ServicoFinali
             "AND (:dataInicio IS NULL OR s.dataInicio >= :dataInicio) " +
             "AND (:dataFim IS NULL OR s.dataFinalizacao <= :dataFim)")
     List<ServicoFinalizado> buscarComFiltros(@Param("termo") String termo,
-                                             @Param("dataInicio") LocalDate dataInicio,
-                                             @Param("dataFim") LocalDate dataFim);
+                                             @Param("dataInicio") LocalDateTime dataInicio,
+                                             @Param("dataFim") LocalDateTime dataFim);
 }

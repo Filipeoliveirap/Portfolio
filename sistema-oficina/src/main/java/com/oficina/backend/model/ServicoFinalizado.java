@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "servicos_finalizados")
@@ -16,9 +17,9 @@ public class ServicoFinalizado {
 
     private BigDecimal preco;
 
-    private LocalDate dataInicio;
+    private LocalDateTime dataInicio;
 
-    private LocalDate dataFinalizacao;
+    private LocalDateTime dataFinalizacao;
 
     private String nomeCliente;
 
@@ -52,15 +53,15 @@ public class ServicoFinalizado {
         this.preco = preco;
     }
 
-    public LocalDate getDataInicio() {return dataInicio;}
+    public LocalDateTime getDataInicio() {return dataInicio;}
 
-    public void setDataInicio(LocalDate dataInicio) {this.dataInicio = dataInicio;}
+    public void setDataInicio(LocalDateTime dataInicio) {this.dataInicio = dataInicio;}
 
-    public LocalDate getDataFinalizacao() {
+    public LocalDateTime getDataFinalizacao() {
         return dataFinalizacao;
     }
 
-    public void setDataFinalizacao(LocalDate dataFinalizacao) {
+    public void setDataFinalizacao(LocalDateTime dataFinalizacao) {
         this.dataFinalizacao = dataFinalizacao;
     }
 

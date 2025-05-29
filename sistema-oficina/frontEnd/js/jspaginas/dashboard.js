@@ -93,12 +93,12 @@ document.addEventListener('DOMContentLoaded', () => {
     data.ultimosServicos.forEach(servico => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>${servico.nomeCliente || '-'}</td>
-        <td>${servico.descricao || '-'}</td>
-        <td>${servico.dataInicio || '-'}</td>
-        <td>${servico.data || '-'}</td>
-        <td>R$ ${servico.valor ? servico.valor.toFixed(2).replace('.', ',') : '-'}</td>
-        <td>${servico.observacoes || '-'}</td>
+        <td class="px-6 py-5 align-top rounded-l-lg">${servico.nomeCliente || '-'}</td>
+        <td class="px-6 py-5 align-top">${servico.descricao || '-'}</td>
+        <td class="px-6 py-5 align-top">${servico.dataInicio || '-'}</td>
+        <td class="px-6 py-5 align-top">${servico.data || '-'}</td>
+        <td class="px-6 py-5 align-top">R$ ${servico.valor ? servico.valor.toFixed(2).replace('.', ',') : '-'}</td>
+        <td class="px-6 py-5 align-top rounded-r-lg">${servico.observacoes || '-'}</td>
       `;
       tbody.appendChild(tr);
     });

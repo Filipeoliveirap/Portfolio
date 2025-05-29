@@ -9,15 +9,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const clienteId = params.get('id');
 
-    if (adicionarClienteBtn) {
+    if (adicionarClienteBtn && cadastroClienteForm) {
         adicionarClienteBtn.addEventListener('click', () => {
-            modal.style.display = "block";
-            cadastroClienteForm.reset();
-            document.getElementById('id').value = '';
-            document.getElementById('titulo-formulario').innerText = 'Cadastro de Cliente';
-            limparErrosFormulario();
-        });
-    }
+        cadastroClienteForm.reset();
+        document.getElementById('id').value = '';
+        document.getElementById('titulo-formulario').innerText = 'Cadastro de Cliente';
+        limparErrosFormulario();
+    });
+}
 
     if (closeBtn) {
         closeBtn.addEventListener('click', () => {
@@ -210,26 +209,32 @@ function adicionarClienteNaTabela(cliente) {
     const novaLinha = tabela.insertRow();
     novaLinha.setAttribute('data-id', cliente.id);
     novaLinha.innerHTML = `
-        <td class="px-5 py-5 border-b border-gray-200 text-sm">${cliente.nome}</td>
-        <td class="px-5 py-5 border-b border-gray-200 text-sm">${cliente.cpf}</td>
-        <td class="px-5 py-5 border-b border-gray-200 text-sm">${cliente.telefone}</td>
-        <td class="px-5 py-5 border-b border-gray-200 text-sm">${cliente.email}</td>
-        <td class="px-5 py-5 border-b border-gray-200 text-sm">
+        <td class="px-5 py-5 border-b border-gray-700 text-sm text-white">${cliente.nome}</td>
+        <td class="px-5 py-5 border-b border-gray-700 text-sm text-white">${cliente.cpf}</td>
+        <td class="px-5 py-5 border-b border-gray-700 text-sm text-white">${cliente.telefone}</td>
+        <td class="px-5 py-5 border-b border-gray-700 text-sm text-white">${cliente.email}</td>
+        <td class="px-5 py-5 border-b border-gray-700 text-sm text-white">
             ${cliente.endereco && cliente.endereco.trim() !== "" ? cliente.endereco : 'Não disponível'}
         </td>
-        <td class="px-5 py-5 border-b border-gray-200 text-sm space-x-2">
-            <button
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded-md shadow-md focus:outline-none focus:shadow-outline text-xs"
-                onclick="editarCliente(${cliente.id})"
-            >
-                <i class="fas fa-edit"></i> Editar
-            </button>
-            <button
-                class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded-md shadow-md focus:outline-none focus:shadow-outline text-xs"
-                onclick="excluirCliente(${cliente.id})"
-            >
-                <i class="fas fa-trash-alt"></i> Excluir
-            </button>
+        <td class="px-5 py-5 border-b border-gray-700 text-sm text-white text-center">
+            <div class="flex justify-center items-center space-x-2">
+                <button
+                    class="bg-orange-600 hover:bg-orange-700 text-white font-semibold py-1 px-3 rounded-md shadow-md transition-colors text-xs"
+                    onclick="editarCliente(${cliente.id})"
+                    aria-label="Editar cliente ${cliente.nome}"
+                >
+                    <i class="fas fa-edit"></i> Editar
+                </button>
+                <button
+                    class="bg-red-600 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-md shadow-md transition-colors text-xs"
+                    onclick="excluirCliente(${cliente.id})"
+                    aria-label="Excluir cliente ${cliente.nome}"
+                >
+                    <i class="fas fa-trash-alt"></i> Excluir
+                </button>
+            </div>
         </td>
     `;
+
+
 }

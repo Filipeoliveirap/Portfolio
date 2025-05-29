@@ -73,7 +73,7 @@ function renderizarPaginacao() {
   for (let i = 0; i < totalPaginas; i++) {
     const btn = document.createElement("button");
     btn.textContent = i + 1;
-    btn.className = `px-3 py-1 m-1 rounded ${i === paginaAtual ? 'bg-blue-600 text-white' : 'bg-gray-200'}`;
+    btn.className = `mx-1 px-3 py-1 rounded ${i === paginaAtual ? 'bg-orange-600 text-white' : 'bg-gray-500'}`;
     btn.addEventListener("click", () => {
       paginaAtual = i;
       buscarServicosFinalizados();
@@ -155,32 +155,41 @@ function carregarTabelaComDados(servicos) {
   tabelaFinalizados.innerHTML = '';
 
   if (servicos.length === 0) {
-    tabelaFinalizados.innerHTML = `<tr><td colspan="8" class="text-center p-4">Nenhum serviço finalizado encontrado.</td></tr>`;
+    tabelaFinalizados.innerHTML = `<tr><td colspan="8" class="text-center p-4 text-white bg-black bg-opacity-50 rounded">Nenhum serviço finalizado encontrado.</td></tr>`;
     return;
   }
 
   servicos.forEach(servico => {
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td class="px-5 py-3 border-b border-gray-200">${servico.descricao}</td>
-      <td class="px-5 py-3 border-b border-gray-200">R$ ${servico.preco.toFixed(2)}</td>
-      <td class="px-5 py-3 border-b border-gray-200">${formatarDataBrasileira(servico.dataInicio)}</td>
-      <td class="px-5 py-3 border-b border-gray-200">${formatarDataBrasileira(servico.dataFinalizacao)}</td>
-      <td class="px-5 py-3 border-b border-gray-200">${servico.nomeCliente}</td>
-      <td class="px-5 py-3 border-b border-gray-200">${servico.cpfCliente}</td>
-      <td class="px-5 py-3 border-b border-gray-200">${servico.observacoes || ''}</td>
-      <td class="flex gap-1">
-          <button onclick="gerarRelatorio(${servico.id})" class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-2 rounded" title="Gerar Relatório">
-              <i class="fas fa-file-pdf"></i>
+      <td class="px-5 py-3 border-b border-gray-700">${servico.descricao}</td>
+      <td class="px-5 py-3 border-b border-gray-700">R$ ${servico.preco.toFixed(2)}</td>
+      <td class="px-5 py-3 border-b border-gray-700">${formatarDataBrasileira(servico.dataInicio)}</td>
+      <td class="px-5 py-3 border-b border-gray-700">${formatarDataBrasileira(servico.dataFinalizacao)}</td>
+      <td class="px-5 py-3 border-b border-gray-700">${servico.nomeCliente}</td>
+      <td class="px-5 py-3 border-b border-gray-700">${servico.cpfCliente}</td>
+      <td class="px-5 py-3 border-b border-gray-700">${servico.observacoes || ''}</td>
+      <td class="px-5 py-3 border-b border-gray-700">
+        <div class="flex gap-2">
+          <button onclick="gerarRelatorio(${servico.id})" 
+                  class="bg-orange-600 hover:bg-orange-700 text-white py-1 px-2 rounded shadow-sm" 
+                  title="Gerar Relatório">
+            <i class="fas fa-file-pdf"></i>
           </button>
-          <button onclick="adicionarObservacao(${servico.id})" class="bg-purple-600 hover:bg-purple-700 text-white py-1 px-2 rounded" title="Adicionar Observação">
-              <i class="fas fa-sticky-note"></i>
+          <button onclick="adicionarObservacao(${servico.id})" 
+                  class="bg-purple-600 hover:bg-purple-700 text-white py-1 px-2 rounded shadow-sm" 
+                  title="Adicionar Observação">
+            <i class="fas fa-sticky-note"></i>
           </button>
-          <button onclick="excluirServico(${servico.id})" class="bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded" title="Excluir">
-              <i class="fas fa-trash"></i>
+          <button onclick="excluirServico(${servico.id})" 
+                  class="bg-red-600 hover:bg-red-700 text-white py-1 px-2 rounded shadow-sm" 
+                  title="Excluir">
+            <i class="fas fa-trash"></i>
           </button>
+        </div>
       </td>
     `;
+
     tabelaFinalizados.appendChild(tr);
   });
 }
@@ -223,7 +232,7 @@ async function baixarRelatorioGeral() {
     url.searchParams.append("pagina", paginaAtual);
     url.searchParams.append("tamanho", tamanhoPagina);
 
-    console.log("📝 Gerando relatório da página atual com URL:", url.toString());
+    console.log(" Gerando relatório da página atual com URL:", url.toString());
 
     const response = await fetch(url.toString(), {
       method: 'GET',
@@ -295,6 +304,8 @@ async function adicionarObservacao(id) {
 
     if (!observacao) {
       console.log('Usuário cancelou ou não digitou nada.');
+      // Aqui também pode usar uma função de alerta informativo, se quiser:
+      // mostrarAlertaInfo('Operação cancelada pelo usuário.');
       return;
     }
 
@@ -306,10 +317,10 @@ async function adicionarObservacao(id) {
 
     if (!response.ok) throw new Error('Erro ao adicionar observação');
 
-    alert('Observação adicionada com sucesso!');
+    alertaSucesso('Observação adicionada com sucesso!');
     buscarServicosFinalizados(); // atualiza tabela
   } catch (error) {
-    alert(error.message);
+    alertaErro(error.message);
   }
 }
 
@@ -324,7 +335,7 @@ async function excluirServico(id) {
 
     if (!response.ok) throw new Error('Erro ao excluir serviço');
 
-    alert('Serviço excluído com sucesso!');
+    alertaSucesso('Serviço excluído com sucesso!');
     buscarServicosFinalizados(); // Atualiza a tabela com filtros atuais
   } catch (error) {
     alert(error.message);

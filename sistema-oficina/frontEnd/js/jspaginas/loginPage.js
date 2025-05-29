@@ -2,7 +2,7 @@
 
 // Usuário e senha fixos
 const usuarioValido = "admin";
-const senhaValida = "123456";
+const senhaValida = "123";
 
 function alertaErro(titulo = 'Erro', mensagem = 'Algo deu errado!') {
   Swal.fire({

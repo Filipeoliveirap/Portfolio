@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!dados.content || dados.content.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="7" class="text-center p-4">
+            <td colspan="7" class="text-center p-4 text-white bg-black bg-opacity-50 rounded">
               Nenhum produto encontrado ou cadastrado.
             </td>
           </tr>
@@ -74,19 +74,21 @@ document.addEventListener('DOMContentLoaded', () => {
         row.setAttribute('data-id', produto.id);
 
         row.innerHTML = `
-          <td class="px-5 py-3 border-b text-sm">${produto.nome}</td>
-          <td class="px-5 py-3 border-b text-sm">${produto.quantidade}</td>
-          <td class="px-5 py-3 border-b text-sm">R$ ${produto.precoUnitario.toFixed(2)}</td>
-          <td class="px-5 py-3 border-b text-sm">R$ ${precoTotal}</td>
-          <td class="px-5 py-3 border-b text-sm">${produto.categoria ?? 'Não disponível'}</td>
-          <td class="px-6 py-4 border-b border-gray-200 text-sm">${produto.observacao || '—'}</td>
-          <td class="px-5 py-3 border-b text-sm text-center space-x-2">
-            <button onclick="editarProduto(${produto.id})" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded-md text-xs" aria-label="Editar produto ${produto.nome}">
-              Editar
-            </button>
-            <button onclick="excluirProduto(${produto.id})" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded-md text-xs" aria-label="Excluir produto ${produto.nome}">
-              Excluir
-            </button>
+          <td class="px-5 py-3 border-b border-gray-700 text-sm text-white">${produto.nome}</td>
+          <td class="px-5 py-3 border-b border-gray-700 text-sm text-white">${produto.quantidade}</td>
+          <td class="px-5 py-3 border-b border-gray-700 text-sm text-white">R$ ${produto.precoUnitario.toFixed(2)}</td>
+          <td class="px-5 py-3 border-b border-gray-700 text-sm text-white">R$ ${precoTotal}</td>
+          <td class="px-5 py-3 border-b border-gray-700 text-sm text-white">${produto.categoria ?? 'Não disponível'}</td>
+          <td class="px-6 py-4 border-b border-gray-700 text-sm text-white">${produto.observacao || '—'}</td>
+          <td class="px-5 py-3 border-b border-gray-700 text-sm text-white">
+            <div class="flex items-center space-x-2 justify-center h-full">
+              <button onclick="editarProduto(${produto.id})" class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-1 px-3 rounded shadow">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button onclick="excluirProduto(${produto.id})" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded shadow">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
           </td>
         `;
 
@@ -104,11 +106,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const paginacao = document.getElementById('paginacao-estoque');
     paginacao.innerHTML = '';
 
+    if (totalPaginas <= 1) {
+      return; // Não mostra paginação se só tiver uma página
+    }
+
     for (let i = 0; i < totalPaginas; i++) {
       const botao = document.createElement('button');
       botao.textContent = i + 1;
       botao.disabled = i === paginaAtual;
-      botao.className = 'bg-gray-200 hover:bg-gray-400 text-gray-800 font-bold py-1 px-3 rounded mx-1';
+      botao.className = `mx-1 px-3 py-1 rounded ${i === paginaAtual ? 'bg-orange-600 text-white' : 'bg-gray-500'}`;
 
       // Evento para mudar página
       botao.addEventListener('click', () => {

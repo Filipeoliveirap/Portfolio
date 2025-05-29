@@ -15,21 +15,23 @@ async function excluirCliente(id) {
             method: 'DELETE'
         });
 
-        if (!response.ok) {
+        if (response.status === 204) {
+            const linha = document.querySelector(`tr[data-id="${id}"]`);
+            if (linha) {
+                linha.remove();
+            }
+            await alertaSucesso('Cliente excluído com sucesso!');
+        } else if (response.status === 409) {
+            await alertaErro('Não é possível excluir cliente', 'Este cliente possui serviços vinculados e não pode ser excluído.');
+        } else {
             throw new Error('Erro ao excluir o cliente');
         }
-
-        const linha = document.querySelector(`tr[data-id="${id}"]`);
-        if (linha) {
-            linha.remove();
-        }
-
-        await alertaSucesso('Cliente excluído com sucesso!');
     } catch (error) {
         console.error('Erro:', error.message);
         await alertaErro('Erro ao excluir cliente', error.message);
     }
 }
+
 
 document.addEventListener('DOMContentLoaded', function () {
     const tbody = document.querySelector('#tabela-clientes tbody');
@@ -63,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!dados.content || dados.content.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="6" class="text-center p-4">
+                        <td colspan="6" class="text-center p-4 text-white bg-black bg-opacity-50 rounded">
                             Nenhum cliente encontrado ou cadastrado.
                         </td>
                     </tr>
@@ -78,17 +80,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 row.setAttribute('data-id', cliente.id);
 
                 row.innerHTML = `
-                    <td class="px-5 py-3 border-b text-sm">${cliente.nome}</td>
-                    <td class="px-5 py-3 border-b text-sm">${cliente.cpf}</td>
-                    <td class="px-5 py-3 border-b text-sm">${cliente.telefone}</td>
-                    <td class="px-5 py-3 border-b text-sm">${cliente.email}</td>
-                    <td class="px-5 py-3 border-b text-sm">${cliente.endereco ?? 'Não disponível'}</td>
-                    <td class="px-5 py-3 border-b text-sm text-center space-x-2">
-                        <button onclick="editarCliente(${cliente.id})" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md">
-                            Editar
+                    <td class="px-5 py-5 border-b border-gray-700 text-sm text-white">${cliente.nome}</td>
+                    <td class="px-5 py-5 border-b border-gray-700 text-sm text-white">${cliente.cpf}</td>
+                    <td class="px-5 py-5 border-b border-gray-700 text-sm text-white">${cliente.telefone}</td>
+                    <td class="px-5 py-5 border-b border-gray-700 text-sm text-white">${cliente.email}</td>
+                    <td class="px-5 py-5 border-b border-gray-700 text-sm text-white">${cliente.endereco ?? 'Não disponível'}</td>
+                    <td class="px-5 py-3 border-b border-gray-700 text-sm text-center">
+                        <button onclick="editarCliente(${cliente.id})" class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-1 px-3 rounded shadow"><i class="fas fa-edit"></i>
                         </button>
-                        <button onclick="excluirCliente(${cliente.id})" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md">
-                            Excluir
+                        <button onclick="excluirCliente(${cliente.id})" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded shadow"><i class="fas fa-trash"></i>
                         </button>
                     </td>
                 `;
@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const botao = document.createElement('button');
             botao.textContent = i + 1;
             botao.disabled = i === paginaAtual;
-            botao.className = `mx-1 px-3 py-1 rounded ${i === paginaAtual ? 'bg-blue-600 text-white' : 'bg-gray-200'}`;
+            botao.className = `mx-1 px-3 py-1 rounded ${i === paginaAtual ? 'bg-orange-600 text-white' : 'bg-gray-500'}`;
             botao.addEventListener('click', () => {
                 paginaAtual = i;
                 carregarClientes(paginaAtual, filtroAtual, tipoFiltroAtual);

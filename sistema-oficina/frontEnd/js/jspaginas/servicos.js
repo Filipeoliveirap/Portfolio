@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         tabelaServicos.innerHTML = '';
         if (servicos.length === 0) {
-            tabelaServicos.innerHTML = '<tr><td colspan="6" class="text-center p-4">Nenhum serviço encontrado ou cadastrado.</td></tr>';
+            tabelaServicos.innerHTML = '<tr><td colspan="8" class="text-center p-4 text-white bg-black bg-opacity-50 rounded">Nenhum serviço encontrado ou cadastrado.</td></tr>';
             return;
         }
 
@@ -36,17 +36,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const tr = document.createElement('tr');
             tr.id = `servico-${servico.id}`;  // <-- id para remover linha após finalizar/excluir
             tr.innerHTML = `
-                <td class="px-5 py-3 border-b border-gray-200">${servico.descricao}</td>
-                <td class="px-5 py-3 border-b border-gray-200">R$ ${servico.preco}</td>
-                <td class="px-5 py-3 border-b border-gray-200">${formatarData(servico.data)}</td>
-                <td class="px-5 py-3 border-b border-gray-200">${servico.cliente?.nome || ''}</td>
-                <td class="px-5 py-3 border-b border-gray-200">${servico.cliente?.cpf || ''}</td>
-                <td class="px-5 py-3 border-b border-gray-200 space-x-2">
-                    <button onclick="editarServico(${servico.id})" class="bg-yellow-400 hover:bg-yellow-500 text-white py-1 px-3 rounded"><i class="fas fa-edit"></i></button>
-                    <button onclick="excluirServico(${servico.id})" class="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded"><i class="fas fa-trash"></i></button>
-                    <button onclick="finalizarServico(${servico.id})" class="bg-green-600 hover:bg-green-700 text-white py-1 px-3 rounded"><i class="fas fa-check"></i></button>
+                <td class="px-5 py-3 border-b border-gray-700 text-white">${servico.descricao}</td>
+                <td class="px-5 py-3 border-b border-gray-700 text-white">R$ ${servico.preco}</td>
+                <td class="px-5 py-3 border-b border-gray-700 text-white">${formatarData(servico.data)}</td>
+                <td class="px-5 py-3 border-b border-gray-700 text-white">${servico.cliente?.nome || ''}</td>
+                <td class="px-5 py-3 border-b border-gray-700 text-white">${servico.cliente?.cpf || ''}</td>
+                <td class="px-5 py-3 border-b border-gray-700 space-x-2">
+                    <button onclick="editarServico(${servico.id})" class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-1 px-3 rounded shadow"><i class="fas fa-edit"></i></button>
+                    <button onclick="excluirServico(${servico.id})" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded shadow"><i class="fas fa-trash"></i></button>
+                    <button onclick="finalizarServico(${servico.id})" class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-1 px-3 rounded shadow"><i class="fas fa-check"></i></button>
                 </td>
             `;
+
             tabelaServicos.appendChild(tr);
         });
     }

@@ -1,132 +1,141 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Serviços Finalizados</title>
-  <link rel="stylesheet" href="../css/global.css" />
+  <title>Serviços Finalizados - Júnior Diesel Automotiva</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #000000;
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
 </head>
-<body class="bg-gray-100 min-h-screen p-4 md:p-6 font-sans">
-  <main class="max-w-7xl mx-auto">
-    <h1 class="text-3xl font-bold text-blue-600 mb-6">Serviços Finalizados</h1>
+<body class="flex flex-col min-h-screen px-10 bg-black bg-opacity-90 relative text-white">
+  <!-- Logo no canto superior esquerdo -->
+  <div class="absolute top-5 left-10 flex items-center gap-2">
+    <div class="bg-orange-600 p-2 rounded">
+      <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487a2.44 2.44 0 013.45 3.45l-9.55 9.551-4.608 1.158 1.158-4.608 9.55-9.551z"></path>
+      </svg>
+    </div>
+    <div class="text-left">
+      <h1 class="text-white text-2xl font-extrabold leading-tight">JÚNIOR DIESEL</h1>
+      <p class="text-gray-300 tracking-widest text-sm font-medium">AUTOMOTIVA</p>
+    </div>
+  </div>
 
-    <section class="bg-white shadow-md rounded-lg p-6 mb-10">
-      <!-- Filtros de Pesquisa -->
-      <h2 class="text-xl font-semibold text-gray-800 mb-4">Histórico de Serviços Finalizados</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+  <div class="bg-[#1E1E1E] bg-opacity-90 p-8 rounded-2xl shadow-2xl w-full max-w-5xl mx-auto mt-20">
+    <h2 class="text-3xl font-extrabold mb-8 text-orange-600 text-center">Serviços Finalizados</h2>
+
+    <div class="bg-[#2D2D2D] rounded-lg p-6">
+      <!-- Filtros -->
+      <div class="flex flex-col md:flex-row items-center justify-between mb-6 space-y-4 md:space-y-0 md:space-x-4">
         <input 
           type="text" 
           id="pesquisar-servico-finalizado" 
-          placeholder="Descrição ou CPF..." 
-          class="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 w-full"
-          aria-label="Pesquisar por descrição ou CPF"
+          placeholder="Pesquisar por descrição ou CPF..." 
+          class="shadow-sm focus:ring-orange-600 focus:border-orange-600 block w-full sm:text-sm border-gray-600 rounded-md bg-[#1E1E1E] text-white placeholder-gray-400"
         />
         <input 
           type="date" 
           id="data-inicio" 
-          class="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 w-full"
+          class="shadow-sm focus:ring-orange-600 focus:border-orange-600 block w-full sm:text-sm border-gray-600 rounded-md bg-[#1E1E1E] text-white"
           title="Data de início"
-          aria-label="Data de início"
         />
         <input 
           type="date" 
           id="data-fim" 
-          class="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 w-full"
+          class="shadow-sm focus:ring-orange-600 focus:border-orange-600 block w-full sm:text-sm border-gray-600 rounded-md bg-[#1E1E1E] text-white"
           title="Data de fim"
-          aria-label="Data de fim"
         />
         <select 
-          id="filtro-periodo" 
-          class="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 w-full"
-          title="Filtrar por período"
-          aria-label="Filtrar por período"
+          id="filtro-periodo" class="border border-gray-600 rounded-md p-2 text-sm bg-[#1E1E1E] text-white" title="Filtrar por período"
         >
-          <option value="">Período</option>
-          <option value="semana">Esta semana</option>
-          <option value="mes">Este mês</option>
-          <option value="ano">Este ano</option>
-          <option value="todos">Todos os serviços</option>
+          <option value="" class="text-black">Período</option>
+          <option value="semana" class="text-black">Esta semana</option>
+          <option value="mes" class="text-black">Este mês</option>
+          <option value="ano" class="text-black">Este ano</option>
+          <option value="todos" class="text-black">Todos os serviços</option>
         </select>
         <button 
           id="btn-buscar-servico-finalizado" 
-          class="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md shadow-md flex items-center justify-center transition"
-          aria-label="Pesquisar serviços"
+          class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded-md shadow-md focus:outline-none focus:shadow-outline flex items-center space-x-2"
         >
-          <i class="fas fa-search mr-2 animate-pulse"></i> Pesquisar
+          <i class="fas fa-search"></i><span>Pesquisar</span>
         </button>
       </div>
 
       <!-- Tabela -->
-      <div class="overflow-x-auto">
-        <table id="tabela-servicos-finalizados" class="min-w-full bg-white rounded-lg shadow-md">
-          <thead class="bg-gray-200 text-gray-700">
+      <div class="overflow-x-auto rounded-md shadow-inner border border-gray-700">
+        <table id="tabela-servicos-finalizados" class="min-w-full leading-normal">
+          <thead class="bg-orange-700 text-white">
             <tr>
-              <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Descrição</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Preço</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Data Início</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Data Finalização</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Cliente</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold uppercase">CPF</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Observações</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Ações</th>
+              <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider">Descrição</th>
+              <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider">Preço</th>
+              <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider">Data Início</th>
+              <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider">Data Finalização</th>
+              <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider">Cliente</th>
+              <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider">CPF</th>
+              <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider">Observações</th>
+              <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider">Ações</th>
             </tr>
           </thead>
-          <tbody class="bg-white">
-            <!-- Conteúdo dinâmico via JavaScript -->
+          <tbody class="bg-[#1E1E1E] text-white">
+            <!-- Conteúdo dinâmico aqui -->
           </tbody>
         </table>
       </div>
 
-      <!-- Botão Relatório Geral -->
-      <div class="flex justify-end mt-6">
+      <!-- Paginação -->
+      <div id="paginacao" class="flex justify-center mt-6 space-x-2 text-white"></div>
+
+      <!-- Botão Adicionar ou Gerar Relatório -->
+      <div class="mt-6 flex justify-end space-x-4">
         <button 
           id="btn-gerar-relatorio-geral" 
-          class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md shadow-md flex items-center transition"
-          aria-label="Gerar relatório geral"
+          class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded-md shadow-md focus:outline-none focus:shadow-outline flex items-center space-x-2"
         >
-          <i class="fas fa-file-pdf mr-2"></i> Gerar Relatório Geral
+          <i class="fas fa-file-pdf"></i><span>Gerar Relatório</span>
         </button>
       </div>
+    </div>
+  </div>
 
-      <!-- Paginação -->
-      <div id="paginacao" class="flex justify-center mt-6 space-x-2"></div>
-    </section>
-
-    <!-- Modal de Observação -->
-    <div id="modalObservacao" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden">
-      <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-md">
-        <h2 class="text-xl font-semibold mb-4 text-gray-800">Adicionar Observação</h2>
-        <textarea 
-          id="inputObservacao" 
-          class="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-purple-500" 
-          rows="4" 
-          placeholder="Digite a observação..."
-          aria-label="Campo para digitar a observação"
-        ></textarea>
-        <div class="flex justify-end gap-2 mt-4">
-          <button 
-            id="btnCancelar" 
-            class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition"
-            aria-label="Cancelar observação"
-          >
-            Cancelar
-          </button>
-          <button 
-            id="btnSalvar" 
-            class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50 transition"
-            disabled
-            aria-label="Salvar observação"
-          >
-            Salvar
-          </button>
-        </div>
+  <!-- Modal de Observação -->
+  <div id="modalObservacao" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden">
+    <div class="bg-[#1E1E1E] text-white rounded-xl shadow-lg p-6 w-full max-w-md">
+      <h2 class="text-xl font-semibold mb-4 text-orange-500">Adicionar Observação</h2>
+      <textarea 
+        id="inputObservacao" 
+        class="w-full p-3 border border-gray-600 bg-[#2D2D2D] text-white rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-orange-500" 
+        rows="4" 
+        placeholder="Digite a observação..."
+        aria-label="Campo para digitar a observação"
+      ></textarea>
+      <div class="flex justify-end gap-2 mt-4">
+        <button 
+          id="btnCancelar" 
+          class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition"
+          aria-label="Cancelar observação"
+        >
+          Cancelar
+        </button>
+        <button 
+          id="btnSalvar" 
+          class="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 disabled:opacity-50 transition"
+          disabled
+          aria-label="Salvar observação"
+        >
+          Salvar
+        </button>
       </div>
     </div>
-  </main>
+  </div>
 
-  <!-- Scripts -->
   <script src="../js/jspaginas/relatorios.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="../js/alertas.js"></script>

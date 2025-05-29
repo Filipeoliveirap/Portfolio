@@ -3,27 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login - Oficina do Junio</title>
-
-  <!-- Fonte Inter + Tailwind CSS -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <title>Login - Oficina</title>
+  <link rel="stylesheet" href="../css/global.css">
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <style>
-    body {
-        font-family: 'Inter', sans-serif;
-    }
-  </style>
-
 
   <!-- Ícones -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-    }
-  </style>
 </head>
 <body class="h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-gray-100 to-white relative overflow-hidden">
 
@@ -35,11 +21,16 @@
     
     <!-- Logo -->
     <div class="flex justify-center mb-6">
-      <img src="../imagens/fotoLoginPage.jpg" alt="Logo Oficina" class="h-16">
+      <img src="../imagens/fotoLogo.png" alt="Logo Oficina" style="height: 170px" class="max-w-full w-auto">
     </div>
 
     <!-- Título -->
-    <h2 class="text-2xl font-bold text-blue-600 text-center mb-6">Bem-vindo à Oficina</h2>
+    <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-blue-600 text-center mb-1 flex items-center justify-center gap-2">
+      <i class="fas fa-tools text-blue-500 text-xl sm:text-2xl"></i>
+      <span class="whitespace-nowrap">Junio Diesel Automotiva</span>
+    </h2>
+
+    <p class="text-gray-500 text-center text-sm mb-6">Acesse o sistema e gerencie com eficiência</p>
 
     <!-- Formulário -->
     <form id="loginForm">

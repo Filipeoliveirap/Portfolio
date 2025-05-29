@@ -1,7 +1,44 @@
+let paginaAtual = 0;
+let totalPaginas = 0;
+const tamanhoPagina = 10; // ou o que você quiser
+
 const tabelaFinalizados = document.querySelector('#tabela-servicos-finalizados tbody');
 const inputPesquisa = document.getElementById('pesquisar-servico-finalizado');
 const btnBuscar = document.getElementById('btn-buscar-servico-finalizado');
 const btnGerarRelatorioGeral = document.getElementById('btn-gerar-relatorio-geral');
+const filtroPeriodo = document.getElementById('filtro-periodo');
+
+filtroPeriodo.addEventListener('change', (e) => {
+  if (e.target.value === 'todos') {
+    document.getElementById('data-inicio').value = '';
+    document.getElementById('data-fim').value = '';
+  }
+  paginaAtual = 0; // volta para primeira página
+});
+
+filtroPeriodo.addEventListener('change', (e) => {
+  if (e.target.value === 'semana') {
+    document.getElementById('data-inicio').value = '';
+    document.getElementById('data-fim').value = '';
+  }
+  paginaAtual = 0; // volta para primeira página
+});
+
+filtroPeriodo.addEventListener('change', (e) => {
+  if (e.target.value === 'mes') {
+    document.getElementById('data-inicio').value = '';
+    document.getElementById('data-fim').value = '';
+  }
+  paginaAtual = 0; // volta para primeira página
+});
+
+filtroPeriodo.addEventListener('change', (e) => {
+  if (e.target.value === 'ano') {
+    document.getElementById('data-inicio').value = '';
+    document.getElementById('data-fim').value = '';
+  }
+  paginaAtual = 0; // volta para primeira página
+});
 
 function formatarDataBrasileira(dataIso) {
   const data = new Date(dataIso);
@@ -27,21 +64,69 @@ let filtrosAtuais = {
 btnBuscar.addEventListener('click', buscarServicosFinalizados);
 btnGerarRelatorioGeral.addEventListener('click', baixarRelatorioGeral);
 
+function renderizarPaginacao() {
+  const container = document.getElementById("paginacao");
+  container.innerHTML = '';
+
+  if (totalPaginas <= 1) return;
+
+  for (let i = 0; i < totalPaginas; i++) {
+    const btn = document.createElement("button");
+    btn.textContent = i + 1;
+    btn.className = `px-3 py-1 m-1 rounded ${i === paginaAtual ? 'bg-blue-600 text-white' : 'bg-gray-200'}`;
+    btn.addEventListener("click", () => {
+      paginaAtual = i;
+      buscarServicosFinalizados();
+    });
+    container.appendChild(btn);
+  }
+}
+
+
 // Carrega os serviços com os filtros atuais (inicialmente vazios)
 buscarServicosFinalizados();
 
 async function buscarServicosFinalizados() {
   filtrosAtuais.termo = inputPesquisa.value.trim();
-  filtrosAtuais.inicio = formatarDataParaEnvio(document.getElementById('data-inicio').value);
-  filtrosAtuais.fim = formatarDataParaEnvio(document.getElementById('data-fim').value);
   filtrosAtuais.periodo = document.getElementById('filtro-periodo').value;
 
   const url = new URL("http://localhost:8080/servicos-finalizados");
+
+  // Quando o filtro for "todos", desativa paginação e ignora data
+  let pagina = paginaAtual;
+  let tamanho = tamanhoPagina;
+
+  if (filtrosAtuais.periodo === "todos") {
+    // Limpa campos de data
+    document.getElementById('data-inicio').value = '';
+    document.getElementById('data-fim').value = '';
+
+    filtrosAtuais.inicio = '';
+    filtrosAtuais.fim = '';
+
+    pagina = 0;
+    tamanho = 9999; // Número alto para trazer tudo
+
+    // Esconde paginação, se existir
+    const paginacao = document.getElementById("paginacao");
+    if (paginacao) paginacao.style.display = "none";
+  } else {
+    // Caso contrário, coleta datas normalmente
+    filtrosAtuais.inicio = formatarDataParaEnvio(document.getElementById('data-inicio').value);
+    filtrosAtuais.fim = formatarDataParaEnvio(document.getElementById('data-fim').value);
+
+    // Mostra paginação
+    const paginacao = document.getElementById("paginacao");
+    if (paginacao) paginacao.style.display = "flex";
+  }
 
   if (filtrosAtuais.termo) url.searchParams.append("termo", filtrosAtuais.termo);
   if (filtrosAtuais.inicio) url.searchParams.append("inicio", filtrosAtuais.inicio);
   if (filtrosAtuais.fim) url.searchParams.append("fim", filtrosAtuais.fim);
   if (filtrosAtuais.periodo) url.searchParams.append("periodo", filtrosAtuais.periodo);
+
+  url.searchParams.append("pagina", pagina);
+  url.searchParams.append("tamanho", tamanho);
 
   console.log("🔍 URL da requisição:", url.toString());
 
@@ -49,14 +134,22 @@ async function buscarServicosFinalizados() {
     const response = await fetch(url.toString());
     if (!response.ok) throw new Error('Erro ao buscar serviços finalizados');
 
-    const servicos = await response.json();
+    const dados = await response.json();
+    const servicos = dados.content || dados; // Se for lista pura sem paginação
+    totalPaginas = dados.totalPages || 1;
+
     carregarTabelaComDados(servicos);
     console.log("📦 Resposta do back-end:", servicos);
   } catch (error) {
     console.error('Erro:', error);
     alert('Erro ao buscar serviços finalizados');
   }
+
+  if (filtrosAtuais.periodo !== "todos") {
+    renderizarPaginacao(); // Só renderiza paginação se não for "todos"
+  }
 }
+
 
 function carregarTabelaComDados(servicos) {
   tabelaFinalizados.innerHTML = '';
@@ -126,7 +219,11 @@ async function baixarRelatorioGeral() {
     if (filtrosAtuais.fim) url.searchParams.append("fim", filtrosAtuais.fim);
     if (filtrosAtuais.periodo) url.searchParams.append("periodo", filtrosAtuais.periodo);
 
-    console.log("📝 Gerando relatório com URL:", url.toString());
+    // ESSA PARTE GARANTE QUE VAI PEGAR APENAS OS DADOS DA PÁGINA ATUAL
+    url.searchParams.append("pagina", paginaAtual);
+    url.searchParams.append("tamanho", tamanhoPagina);
+
+    console.log("📝 Gerando relatório da página atual com URL:", url.toString());
 
     const response = await fetch(url.toString(), {
       method: 'GET',
@@ -140,7 +237,7 @@ async function baixarRelatorioGeral() {
 
     const a = document.createElement('a');
     a.href = urlBlob;
-    a.download = 'relatorio-servicos-finalizados.pdf';
+    a.download = `relatorio-servicos-finalizados-pagina-${paginaAtual + 1}.pdf`;
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -150,6 +247,7 @@ async function baixarRelatorioGeral() {
     alert('Erro: ' + error.message);
   }
 }
+
 
 function abrirModalObservacao() {
   return new Promise((resolve) => {
@@ -232,4 +330,3 @@ async function excluirServico(id) {
     alert(error.message);
   }
 }
-

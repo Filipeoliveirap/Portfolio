@@ -8,6 +8,9 @@ import com.oficina.backend.service.ProdutoService;
 import com.oficina.backend.service.ServicoFinalizadoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -30,19 +33,24 @@ public class RelatorioController {
     @Autowired
     private ProdutoService produtoService;
 
-    // Relatório geral de serviços finalizados com filtros
     @GetMapping("/servicos-finalizados")
     public ResponseEntity<byte[]> gerarRelatorioServicosFinalizadosFiltrado(
             @RequestParam(required = false) String termo,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fim,
-            @RequestParam(required = false) String periodo
+            @RequestParam(required = false) String periodo,
+            @RequestParam(defaultValue = "0") int pagina,
+            @RequestParam(defaultValue = "10") int tamanho
     ) {
-        List<ServicoFinalizado> servicosFiltrados =
-                servicoFinalizadoService.buscarServicosFinalizados(termo, inicio, fim, periodo);
+        Pageable pageable = PageRequest.of(pagina, tamanho);
+
+        Page<ServicoFinalizado> servicosPage =
+                servicoFinalizadoService.buscarServicosFinalizados(termo, inicio, fim, periodo, pageable);
+
+        List<ServicoFinalizado> servicosFiltrados = servicosPage.getContent();
 
         if (servicosFiltrados.isEmpty()) {
-            return ResponseEntity.noContent().build(); // 204 No Content
+            return ResponseEntity.noContent().build();
         }
 
         ByteArrayInputStream pdf = RelatorioServicoPdfGenerator.gerarRelatorio(servicosFiltrados);
@@ -52,6 +60,7 @@ public class RelatorioController {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdf.readAllBytes());
     }
+
 
     // Relatório individual do serviço finalizado por ID
     @GetMapping("/servico-finalizado/{id}")

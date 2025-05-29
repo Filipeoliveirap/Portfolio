@@ -6,14 +6,16 @@ import com.oficina.backend.service.ServicoFinalizadoService;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
+
 
 @RestController
 @RequestMapping("/servicos-finalizados")
@@ -26,13 +28,14 @@ public class ServicoFinalizadoController {
     @Autowired
     private ServicoFinalizadoService servicoFinalizadoService;
 
-
-
     @DeleteMapping("/{id}")
-    public void excluir(@PathVariable Long id) {
+    public ResponseEntity<Void> excluir(@PathVariable Long id) {
+        if (!servicoFinalizadoRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
         servicoFinalizadoRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
-
     // Endpoint para finalizar serviço a partir de um ID (mover da tabela Servico)
     @PutMapping("/{id}/finalizar")
     public ResponseEntity<?> finalizarServico(@PathVariable Long id) {
@@ -48,17 +51,18 @@ public class ServicoFinalizadoController {
         }
     }
     @GetMapping
-    public ResponseEntity<List<ServicoFinalizado>> listarServicosFinalizados(
+    public Page<ServicoFinalizado> listarServicosFinalizados(
             @RequestParam(required = false) String termo,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fim,
-            @RequestParam(required = false) String periodo) {
+            @RequestParam(required = false) String periodo,
+            @RequestParam(defaultValue = "0") int pagina,
+            @RequestParam(defaultValue = "10") int tamanho) {
 
-        List<ServicoFinalizado> servicos = servicoFinalizadoService.buscarServicosFinalizados(termo, inicio, fim, periodo);
-        return ResponseEntity.ok(servicos);
+        Pageable pageable = PageRequest.of(pagina, tamanho);
+
+        return servicoFinalizadoService.buscarServicosFinalizados(termo, inicio, fim, periodo, pageable);
     }
-
-
 
 
     @PatchMapping("/{id}")
@@ -69,7 +73,5 @@ public class ServicoFinalizadoController {
             return ResponseEntity.ok(servico);
         }).orElse(ResponseEntity.notFound().build());
     }
-
-
 
 }

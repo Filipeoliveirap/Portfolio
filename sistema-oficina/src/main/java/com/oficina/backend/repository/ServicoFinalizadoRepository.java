@@ -1,6 +1,8 @@
 package com.oficina.backend.repository;
 
 import com.oficina.backend.model.ServicoFinalizado;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,6 +14,7 @@ import java.util.List;
 @Repository
 public interface ServicoFinalizadoRepository extends JpaRepository<ServicoFinalizado, Long> {
 
+
     @Query("SELECT s FROM ServicoFinalizado s JOIN FETCH s.cliente ORDER BY s.dataFinalizacao DESC")
     List<ServicoFinalizado> findTop5WithCliente();
 
@@ -19,23 +22,23 @@ public interface ServicoFinalizadoRepository extends JpaRepository<ServicoFinali
             "WHERE (:termo IS NULL OR LOWER(s.descricao) LIKE LOWER(CONCAT('%', :termo, '%')) OR s.cpfCliente LIKE CONCAT('%', :termo, '%')) " +
             "AND (:dataInicio IS NULL OR s.dataInicio >= :dataInicio) " +
             "AND (:dataFim IS NULL OR s.dataFinalizacao <= :dataFim)")
-    List<ServicoFinalizado> buscarComFiltros(@Param("termo") String termo,
+    Page<ServicoFinalizado> buscarComFiltros(@Param("termo") String termo,
                                              @Param("dataInicio") LocalDateTime dataInicio,
-                                             @Param("dataFim") LocalDateTime dataFim);
+                                             @Param("dataFim") LocalDateTime dataFim,
+                                             Pageable pageable);
 
     List<ServicoFinalizado> findTop5ByOrderByDataFinalizacaoDesc();
 
-    @Query("SELECT strftime('%Y-%m', s.dataFinalizacao) as mes, COUNT(s) " +
-            "FROM ServicoFinalizado s " +
+    @Query(value = "SELECT strftime('%Y-%m', data_finalizacao) as mes, COUNT(*) " +
+            "FROM servico_finalizado " +
             "GROUP BY mes " +
-            "ORDER BY mes")
+            "ORDER BY mes", nativeQuery = true)
     List<Object[]> contarServicosPorMes();
 
-    @Query("SELECT strftime('%Y-%m', s.dataFinalizacao), COUNT(s) " +
-            "FROM ServicoFinalizado s " +
-            "WHERE s.dataFinalizacao >= :limite " +
-            "GROUP BY strftime('%Y-%m', s.dataFinalizacao) " +
-            "ORDER BY strftime('%Y-%m', s.dataFinalizacao)")
+    @Query(value = "SELECT strftime('%Y-%m', data_finalizacao), COUNT(*) " +
+            "FROM servico_finalizado " +
+            "WHERE data_finalizacao >= :limite " +
+            "GROUP BY strftime('%Y-%m', data_finalizacao) " +
+            "ORDER BY strftime('%Y-%m', data_finalizacao)", nativeQuery = true)
     List<Object[]> contarServicosPorMesUltimos4Meses(@Param("limite") LocalDateTime limite);
-
 }

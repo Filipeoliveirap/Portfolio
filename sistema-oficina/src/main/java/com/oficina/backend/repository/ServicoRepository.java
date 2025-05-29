@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface ServicoRepository extends JpaRepository<Servico, Long>{
+    boolean existsByClienteId(Long clienteId);
     List<Servico> findByDescricaoContainingIgnoreCaseOrClienteCpfContaining(String descricao, String cpf);
     List<Servico> findByClienteId(Long clienteId);
     List<Servico> findByCliente_NomeContainingIgnoreCase(String nome);

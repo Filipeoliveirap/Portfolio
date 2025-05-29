@@ -68,10 +68,15 @@ public class ClienteController {
 
     // Deletar cliente
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id) {
-        clienteService.deletar(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Void> deletarCliente(@PathVariable Long id) {
+        try {
+            clienteService.deletar(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
     }
+
 
     // Buscar por nome
     @GetMapping("/buscar")

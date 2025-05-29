@@ -2,6 +2,8 @@ package com.oficina.backend.service;
 import com.oficina.backend.exception.CpfDuplicadoException;
 import com.oficina.backend.model.Cliente;
 import com.oficina.backend.repository.ClienteRepository;
+import com.oficina.backend.repository.ServicoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
@@ -13,7 +15,11 @@ import java.util.Optional;
 
 @Service
 public class ClienteService {
-    private final ClienteRepository clienteRepository;
+    @Autowired
+    private ClienteRepository clienteRepository;
+
+    @Autowired
+    private ServicoRepository servicoRepository;
 
     public ClienteService(ClienteRepository clienteRepository){
         this.clienteRepository = clienteRepository;
@@ -45,8 +51,13 @@ public class ClienteService {
     }
 
     //deleta cliente
-    public void deletar(Long id) {
-        clienteRepository.deleteById(id);
+    public void deletar(Long clienteId) {
+        boolean possuiServicos = servicoRepository.existsByClienteId(clienteId);
+        if (possuiServicos) {
+            throw new RuntimeException("Este cliente possui serviços cadastrados e não pode ser excluído.");
+        }
+
+        clienteRepository.deleteById(clienteId);
     }
 
     //atualiza cliente

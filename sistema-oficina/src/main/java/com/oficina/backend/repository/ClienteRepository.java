@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface ClienteRepository extends JpaRepository<Cliente, Long>{
+
     Page<Cliente> findByNomeContainingIgnoreCase(String nome, Pageable pageable);
     List<Cliente> findByNomeContainingIgnoreCase(String nome);
     Optional<Cliente> findByCpf(String cpf);

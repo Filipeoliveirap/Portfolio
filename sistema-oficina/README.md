@@ -1,6 +1,103 @@
+# 🛠️ Workshop Management System
+
+This is a **complete desktop application** for managing a mechanical workshop. The project evolved from a basic CRUD, now featuring modern technologies to provide a realistic and professional experience.
+
+---
+
+## 📸 Demo
+
+🎥 Watch the system running in the video below:  
+👉 [YouTube Video Link](https://youtu.be/5qVeFsw1Pws)
+
+---
+
+## ✨ Features
+
+- Client, service, and product registration
+- Automatic inventory control and updates
+- Service history per client
+- PDF report generation with filters (name, CPF, date, etc.)
+- Search finalized services by period, client, or description
+- Modern and responsive UI with Electron
+- Full integration between frontend and backend
+- Error handling and validations
+
+---
+
+## 🧰 Technologies Used
+
+### 🔙 Backend
+- Java 17
+- Spring Boot
+- SQLite
+- JPA / Hibernate
+
+### 🔜 Frontend
+- Electron
+- HTML, CSS, JavaScript
+- Tailwind CSS
+- Fetch API
+
+## 🗂️ Database Documentation
+
+You can find the database documentation (ER diagram and SQL script) in the folder:  
+📁 `src/doc_bd/`
+
+---
+
+
+## 🚀 How to Run the Project
+
+### 1. Backend – Spring Boot
+
+**Linux/macOS:**
+```bash
+./mvnw spring-boot:run
+```
+
+- Windows (Prompt PowerShell):
+```bash
+mvnw.cmd spring-boot:run
+```
+
+2. The backend will run at: [http://localhost:8080](http://localhost:8080).
+
+### 2. Frontend (React/Node.js)
+
+1. Frontend – Electron
+```bash
+cd frontEnd
+```
+
+2. 
+```bash
+npm install
+npm start
+```
+
+3. The frontend will open automatically, usually at [http://localhost:3000](http://localhost:3000).
+
+---
+
+### Observations
+
+- Make sure the backend is running before starting the frontend, so that the API is available for requests.
+- If you need to change the port or other settings, check the `application.properties` file in the backend and the configuration files in the frontend.
+
+
+
+---
+
+
+
 # Sistema de Gerenciamento de Oficina Mecânica
 
 Este é um sistema desktop para gerenciamento de oficina mecânica. O backend é desenvolvido em Java com Spring Boot e o frontend utiliza Electron, oferecendo uma experiência moderna e funcional para usuários.
+
+## 📸 Demo
+
+🎥 Assista o sistema rodando no link abaixo:  
+👉 [YouTube Video Link](https://youtu.be/5qVeFsw1Pws)
 
 ## Funcionalidades
 
@@ -23,7 +120,13 @@ Este é um sistema desktop para gerenciamento de oficina mecânica. O backend é
 ### Frontend
 - Electron
 - HTML/CSS/JavaScript
-- Fetch API para comunicação com o backend
+- Tailwind CSS
+- Fetch API 
+
+## 🗂️ Database documentação
+
+Voce pode achar a documentação do banco de dados (ER diagrama e SQL script) na pasta:  
+📁 `src/doc_bd/`
 
 # Instruções para Executar o Projeto Completo
 
@@ -31,10 +134,7 @@ Este é um sistema desktop para gerenciamento de oficina mecânica. O backend é
 
 ### 1. Rodando o Backend (Spring Boot)
 
-1. Abra o projeto no terminal
-
-
-2. Execute o backend com o Maven Wrapper:
+1. Execute o backend com o Maven Wrapper:
 
 - No Linux/macOS:
 ```bash
@@ -46,7 +146,7 @@ Este é um sistema desktop para gerenciamento de oficina mecânica. O backend é
 mvnw.cmd spring-boot:run
 ```
 
-3. Aguarde até o backend iniciar. Por padrão, ele estará disponível em [http://localhost:8080](http://localhost:8080).
+2. Aguarde até o backend iniciar. Por padrão, ele estará disponível em [http://localhost:8080](http://localhost:8080).
 
 ---
 
@@ -70,7 +170,7 @@ npm install
 npm start
 ```
 
-4. O frontend abrirá automaticamente no navegador, normalmente em [http://localhost:3000](http://localhost:3000).
+4. O frontend abrirá automaticamente, normalmente em [http://localhost:3000](http://localhost:3000).
 
 ---
 

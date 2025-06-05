@@ -68,7 +68,7 @@ More detailed documentation can be found in the [`/docs`](./docs) folder, includ
 
 - [Project roadmap](./docs/roadmap.md)
 - [Requirements](./docs/requirements.md)
-- [Technical stack justification](./docs/stack.md)
+- [stack](./docs/stack.md)
 - [Architecture models](./docs/architecture)
 - [DB Models](./docs/models)
 
@@ -160,13 +160,13 @@ digital-menu/
 
 ## 📚 Documentação
 
-Documentações detalhadas estão disponíveis na pasta /docs, incluindo:
+Documentações detalhadas estão disponíveis na pasta [/docs], incluindo:
 
--[Roadmap](./docs/roadmap.md)
--[Requisitos](./docs/requirements.md)
--[Stack](./docs/stack.md)
--[Aquitetura] (./docs/architecture.md)
--[BD Modelos](./docs/models.md)
+- [Roadmap](./docs/roadmap.md)
+- [Requisitos](./docs/requirements.md)
+- [Stack](./docs/stack.md)
+- [Aquitetura] (./docs/architecture.md)
+- [BD Modelos](./docs/models.md)
 
 ---
 

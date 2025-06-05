@@ -2,6 +2,11 @@
 
 This is a **complete desktop application** for managing a mechanical workshop. The project evolved from a basic CRUD, now featuring modern technologies to provide a realistic and professional experience.
 
+![Plataforma](https://img.shields.io/badge/platform-Desktop-blue)
+![Backend](https://img.shields.io/badge/backend-Java%20%7C%20Spring%20Boot-orange)
+![Frontend](https://img.shields.io/badge/frontend%20Native%20%7C%20JavaScript-green)
+![Status](https://img.shields.io/badge/status-em%20Completed-green)
+
 ---
 
 ## 📸 Demo
@@ -93,6 +98,13 @@ npm start
 # Sistema de Gerenciamento de Oficina Mecânica
 
 Este é um sistema desktop para gerenciamento de oficina mecânica. O backend é desenvolvido em Java com Spring Boot e o frontend utiliza Electron, oferecendo uma experiência moderna e funcional para usuários.
+
+![Plataforma](https://img.shields.io/badge/platform-Desktop-blue)
+![Backend](https://img.shields.io/badge/backend-Java%20%7C%20Spring%20Boot-orange)
+![Frontend](https://img.shields.io/badge/frontend%20Native%20%7C%20JavaScript-green)
+![Status](https://img.shields.io/badge/status-em%20Concluído-green)
+
+---
 
 ## 📸 Demo
 

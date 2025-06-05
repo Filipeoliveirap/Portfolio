@@ -79,7 +79,7 @@ graph TD;
     - `controller`: handles HTTP requests
     - `service`: business logic
     - `repository`: database communication (JPA/Hibernate)
-    - `entity`: database-mapped entities
+    - `model`: database-mapped entities
     - `dto`: input/output objects (Data Transfer Objects)
     - `mapper`: maps between DTOs and entities
     - `config`: configuration for security, CORS, JWT, etc.

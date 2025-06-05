@@ -160,7 +160,7 @@ digital-menu/
 
 ## 📚 Documentação
 
-Documentações detalhadas estão disponíveis na pasta [/docs], incluindo:
+Documentações detalhadas estão disponíveis na pasta [`/docs`](./docs), incluindo:
 
 - [Roadmap](./docs/roadmap.md)
 - [Requisitos](./docs/requirements.md)

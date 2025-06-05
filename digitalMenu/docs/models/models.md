@@ -10,8 +10,7 @@ The diagram below visually represents the main entities, attributes, and relatio
 
 📎 **Attach the ER diagram file here:**
 
-- [📄 er-diagram.pdf](./path/to/er-diagram.pdf)
-- ![ER Diagram](./path/to/er-diagram.png)
+- ![ER Diagram](./diagramER-digital-menu.png)
 
 ---
 
@@ -103,8 +102,7 @@ O diagrama abaixo representa visualmente as entidades, atributos e os relacionam
 
 📎 **Adicione o arquivo do diagrama aqui:**
 
-- [📄 diagrama-er.pdf](./path/para/diagrama-er.pdf)
-- ![Diagrama ER](./path/para/diagrama-er.png)
+- ![Diagrama ER](./diagramER-digital-menu.png)
 
 ---
 

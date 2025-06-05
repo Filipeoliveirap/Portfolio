@@ -1,6 +1,6 @@
 # 🛣️ Project Roadmap
 
-This document outlines the steps followed for the complete and professional development of the **Digital Menu** system, including objectives, architecture, implementation, features, and documentation.
+This document outlines the steps followed for the complete and professional development of the **Digital Menu** system, including objectives and features.
 
 ---
 
@@ -134,7 +134,7 @@ This document outlines the steps followed for the complete and professional deve
 
 # 🛣️ Project Roadmap
 
-Este documento descreve as etapas seguidas para o desenvolvimento completo e profissional do sistema **Digital Menu**, incluindo objetivos, arquitetura, implementação, funcionalidades e documentação.
+Este documento descreve as etapas seguidas para o desenvolvimento completo e profissional do sistema **Digital Menu**, incluindo objetivos e funcionalidades.
 
 ---
 

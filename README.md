@@ -1,6 +1,6 @@
 # 💼 Portfolio – José Filipe Oliveira Pereira
 
-This repository gathers my main software development projects, focusing on web and desktop applications.
+This repository gathers my main software development projects.
 
 Each project is organized in its own folder, containing source code and a `README.md` with details about features, technologies used, and objectives.
 
@@ -14,6 +14,15 @@ A complete desktop system with backend in Java (Spring Boot) and frontend in Ele
 - Inventory control
 - PDF report generation
 - SQLite database integration
+
+### 📱 [Digital Menu System (React Native + Kotlin + PostgreSQL)](./digital-menu/)
+Professional mobile digital menu app with a robust backend in Kotlin (Spring Boot) and frontend in React Native. Features:
+- Menu browsing by category
+- Order placement and tracking
+- Admin interface with JWT authentication
+- PDF report generation
+- Enterprise-grade project structure with CI/CD, Docker, and monitoring
+
 
 ### 🛠️ [Workshop CRUD System (Java Swing + MySQL)](./sistema-oficina-crud/)
 A simpler workshop system focused on CRUD operations with Java Swing GUI and MySQL database.
@@ -38,7 +47,7 @@ A responsive website for a fictional coffee shop, built with front-end technolog
 
 # 💼 Portfólio – José Filipe Oliveira Pereira
 
-Este repositório reúne meus principais projetos de desenvolvimento de software, com foco em aplicações web e desktop.
+Este repositório reúne meus principais projetos de desenvolvimento de software.
 
 Cada projeto está organizado em uma pasta própria, contendo o código-fonte e um `README.md` com detalhes sobre funcionalidades, tecnologias utilizadas e objetivos.
 
@@ -52,6 +61,14 @@ Sistema desktop completo com backend em Java (Spring Boot) e frontend em Electro
 - Controle de estoque
 - Geração de relatórios em PDF
 - Integração com banco de dados SQLite
+
+### 📱 [Sistema de Cardápio Digital (React Native + Kotlin + PostgreSQL)](./digital-menu/)
+Aplicativo mobile profissional de cardápio digital com backend robusto em Kotlin (Spring Boot) e frontend em React Native. Funcionalidades:
+- Visualização de cardápio por categoria
+- Realização e acompanhamento de pedidos
+- Interface de administração com autenticação JWT
+- Geração de relatórios em PDF
+- Estrutura de projeto empresarial com CI/CD, Docker e monitoramento
 
 ### 🛠️ [Sistema Oficina CRUD (Java Swing + MySQL)](./sistema-oficina-crud/)
 Projeto mais simples de sistema para oficina, focado em operações CRUD com interface gráfica Swing e banco MySQL.

@@ -33,7 +33,7 @@ The prototype includes all key application screens, designed for a smooth and in
 - **Track Order Status (optional)**: View real-time order status updates.
 - **Receive Confirmation**: See a success message after placing an order.
 
-## Class diagram attached: 
+> 📎 **Class diagram attached:** 
 
 - ![Class Diagram Attached](./digital-menu-class-diagram.png)
 
@@ -207,7 +207,7 @@ O protótipo inclui todas as telas principais do aplicativo, projetado para uma 
 
 ## 📊 Diagramas
 
-📎 **Diagrama de casos de uso**
+> 📎 **Diagrama de casos de uso**
 
 **Administrador**
 
@@ -226,7 +226,7 @@ O protótipo inclui todas as telas principais do aplicativo, projetado para uma 
 - Acompanhar Status do Pedido (opcional): Vê atualizações em tempo real do pedido.
 - Receber Confirmação: Recebe mensagem de sucesso após o envio do pedido.
 
-## Diagrama de casos de uso:
+> 📎 **Diagrama classes:**
 
 - ![Diagrama de classes](./digital-menu-class-diagram.png)
 

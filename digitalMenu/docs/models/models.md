@@ -8,7 +8,6 @@ This document describes the database modeling used in the **Digital Menu** syste
 
 The diagram below visually represents the main entities, attributes, and relationships of the system.
 
-📎 **Attach the ER diagram file here:**
 
 - ![ER Diagram](./diagramER-digital-menu.png)
 
@@ -100,7 +99,6 @@ Este documento descreve a modelagem do banco de dados utilizada no sistema **Dig
 
 O diagrama abaixo representa visualmente as entidades, atributos e os relacionamentos principais do sistema.
 
-📎 **Adicione o arquivo do diagrama aqui:**
 
 - ![Diagrama ER](./diagramER-digital-menu.png)
 

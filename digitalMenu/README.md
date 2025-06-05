@@ -165,7 +165,7 @@ Documentações detalhadas estão disponíveis na pasta [/docs], incluindo:
 - [Roadmap](./docs/roadmap.md)
 - [Requisitos](./docs/requirements.md)
 - [Stack](./docs/stack.md)
-- [Aquitetura] (./docs/architecture.md)
+- [Arquitetura](./docs/architecture.md)
 - [BD Modelos](./docs/models.md)
 
 ---

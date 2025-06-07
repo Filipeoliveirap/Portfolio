@@ -15,7 +15,7 @@ A complete desktop system with backend in Java (Spring Boot) and frontend in Ele
 - PDF report generation
 - SQLite database integration
 
-### 📱 [Digital Menu System (React Native + Kotlin + PostgreSQL)](./digital-menu/)
+### 📱 [Digital Menu System (React Native + Kotlin + PostgreSQL)](./digitalMenu/)
 Professional mobile digital menu app with a robust backend in Kotlin (Spring Boot) and frontend in React Native. Features:
 - Menu browsing by category
 - Order placement and tracking

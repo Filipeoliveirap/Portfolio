@@ -4,8 +4,8 @@ This is a **complete desktop application** for managing a mechanical workshop. T
 
 ![Plataforma](https://img.shields.io/badge/platform-Desktop-blue)
 ![Backend](https://img.shields.io/badge/backend-Java%20%7C%20Spring%20Boot-orange)
-![Frontend](https://img.shields.io/badge/frontend%20Native%20%7C%20JavaScript-green)
-![Status](https://img.shields.io/badge/status-em%20Completed-green)
+![Frontend](https://img.shields.io/badge/frontend%20%20%7C%20JavaScript-green)
+![Status](https://img.shields.io/badge/status-%20Completed-green)
 
 ---
 
@@ -101,8 +101,8 @@ Este é um sistema desktop para gerenciamento de oficina mecânica. O backend é
 
 ![Plataforma](https://img.shields.io/badge/platform-Desktop-blue)
 ![Backend](https://img.shields.io/badge/backend-Java%20%7C%20Spring%20Boot-orange)
-![Frontend](https://img.shields.io/badge/frontend%20Native%20%7C%20JavaScript-green)
-![Status](https://img.shields.io/badge/status-em%20Concluído-green)
+![Frontend](https://img.shields.io/badge/frontend%20%20%7C%20JavaScript-green)
+![Status](https://img.shields.io/badge/status-%20Concluído-green)
 
 ---
 

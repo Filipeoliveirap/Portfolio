@@ -230,11 +230,11 @@ function adicionarClienteNaTabela(cliente) {
                     onclick="excluirCliente(${cliente.id})"
                     aria-label="Excluir cliente ${cliente.nome}"
                 >
-                    <i class="fas fa-trash-alt"></i> Excluir
+                    <i class="fas fa-trash-alt"></i> Excluir 
                 </button>
             </div>
         </td>
     `;
-
+    
 
 }

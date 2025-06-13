@@ -13,7 +13,7 @@ class UserService (
     private val passwordEncoder: PasswordEncoder
 ){
         //function to create user
-    fun create(userRequest: UserRequestDTO): UserResponseDTO {
+    fun createUser(userRequest: UserRequestDTO): UserResponseDTO {
         val user = User(
             name = userRequest.name,
             email = userRequest.email,

@@ -1,9 +1,15 @@
 package com.josefilipe.digitalmenu.backend.model
 
 import jakarta.persistence.*
+import lombok.AllArgsConstructor
+import lombok.Builder
+import lombok.NoArgsConstructor
 
 @Entity
 @Table(name = "users")
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 data class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,5 +25,6 @@ data class User(
     val password: String,
 
     @Column(nullable = false, length = 20)
-    val type: String
+    @Enumerated(EnumType.STRING)
+    val type: UserType
 )

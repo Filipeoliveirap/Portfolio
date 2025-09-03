@@ -40,18 +40,15 @@ public class ServicoController {
         servico.setDescricao(dto.getDescricao());
         servico.setPreco(dto.getPreco());
         servico.setData(dto.getData().atStartOfDay());
-        servico.setCliente(cliente); // associando cliente completo
+        servico.setCliente(cliente);
 
         servico = servicoRepository.save(servico);
 
-        // montar DTO de resposta com cliente resumido
         ClienteResumidoDTO clienteResumido = new ClienteResumidoDTO(cliente);
         ServicoDTO resposta = new ServicoDTO(servico);
 
         return ResponseEntity.ok(resposta);
     }
-
-
 
     @GetMapping("/{id}")
     public ResponseEntity<ServicoDTO> buscarPorId(@PathVariable Long id) {
@@ -104,8 +101,8 @@ public class ServicoController {
 
     //buscar por cpf
     @GetMapping("/cpf")
-    public ResponseEntity<List<Servico>> buscarPorCpf(@RequestParam String cpf) {
-        return ResponseEntity.ok(servicoService.buscarPorCpfCliente(cpf));
+    public ResponseEntity<List<Servico>> buscarPorCpf(@RequestParam String termo) {
+        return ResponseEntity.ok(servicoService.buscarPorDescricaoOuCpf(termo));
     }
 
     @GetMapping("/historico")

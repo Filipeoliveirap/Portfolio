@@ -1,9 +1,10 @@
 package com.oficina.backend.controller;
 
+import com.oficina.backend.DTO.FinalizarServicoDTO;
+import com.oficina.backend.DTO.ServicoFinalizadoDTO;
 import com.oficina.backend.model.ServicoFinalizado;
 import com.oficina.backend.repository.ServicoFinalizadoRepository;
 import com.oficina.backend.service.ServicoFinalizadoService;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 
-
 @RestController
 @RequestMapping("/servicos-finalizados")
 @CrossOrigin(origins = "*")
@@ -28,6 +28,7 @@ public class ServicoFinalizadoController {
     @Autowired
     private ServicoFinalizadoService servicoFinalizadoService;
 
+    // Excluir serviço finalizado
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluir(@PathVariable Long id) {
         if (!servicoFinalizadoRepository.existsById(id)) {
@@ -36,22 +37,29 @@ public class ServicoFinalizadoController {
         servicoFinalizadoRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
-    // Endpoint para finalizar serviço a partir de um ID (mover da tabela Servico)
+
+    // Finalizar serviço em andamento
     @PutMapping("/{id}/finalizar")
-    public ResponseEntity<?> finalizarServico(@PathVariable Long id) {
+    public ResponseEntity<ServicoFinalizadoDTO> finalizarServico(
+            @PathVariable Long id,
+            @RequestBody FinalizarServicoDTO dto) {
         try {
-            boolean finalizado = servicoFinalizadoService.finalizarServico(id);
+            boolean finalizado = servicoFinalizadoService.finalizarServico(id, dto);
             if (finalizado) {
-                return ResponseEntity.ok().body("Serviço finalizado com sucesso");
+                ServicoFinalizado servico = servicoFinalizadoService.buscarUltimoFinalizadoPorServicoOriginal(id);
+                ServicoFinalizadoDTO resposta = new ServicoFinalizadoDTO(servico);
+                return ResponseEntity.ok(resposta);
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Serviço não encontrado");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    // Listar serviços finalizados com filtros e paginação
     @GetMapping
-    public Page<ServicoFinalizado> listarServicosFinalizados(
+    public Page<ServicoFinalizadoDTO> listarServicosFinalizados(
             @RequestParam(required = false) String termo,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fim,
@@ -60,18 +68,18 @@ public class ServicoFinalizadoController {
             @RequestParam(defaultValue = "10") int tamanho) {
 
         Pageable pageable = PageRequest.of(pagina, tamanho);
+        Page<ServicoFinalizado> servicos = servicoFinalizadoService.buscarServicosFinalizados(termo, inicio, fim, periodo, pageable);
 
-        return servicoFinalizadoService.buscarServicosFinalizados(termo, inicio, fim, periodo, pageable);
+        return servicos.map(ServicoFinalizadoDTO::new);
     }
 
-
+    // Atualizar observações
     @PatchMapping("/{id}")
-    public ResponseEntity<ServicoFinalizado> atualizarObservacao(@PathVariable Long id, @RequestBody ServicoFinalizado dadosAtualizados) {
+    public ResponseEntity<ServicoFinalizadoDTO> atualizarObservacao(@PathVariable Long id, @RequestBody ServicoFinalizado dadosAtualizados) {
         return servicoFinalizadoRepository.findById(id).map(servico -> {
             servico.setObservacoes(dadosAtualizados.getObservacoes());
             servicoFinalizadoRepository.save(servico);
-            return ResponseEntity.ok(servico);
+            return ResponseEntity.ok(new ServicoFinalizadoDTO(servico));
         }).orElse(ResponseEntity.notFound().build());
     }
-
 }

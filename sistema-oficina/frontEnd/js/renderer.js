@@ -32,6 +32,9 @@ function carregarPagina(pagina) {
     case 'estoque':
       iframe.src = '../html/estoque.html';
       break;
+    case 'veiculos':
+      iframe.src = '../html/veiculo.html';
+      break;
     case 'relatorios':
       iframe.src = '../html/relatorios.html';
       break;

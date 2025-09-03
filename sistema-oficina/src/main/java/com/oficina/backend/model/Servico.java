@@ -40,4 +40,18 @@ public class Servico {
             joinColumns = @JoinColumn(name = "servico_id"),
             inverseJoinColumns = @JoinColumn(name = "produto_id"))
     private List<Produto> produtos = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "servico_unidade_produto",
+            joinColumns = @JoinColumn(name = "servico_id"),
+            inverseJoinColumns = @JoinColumn(name = "unidade_id")
+    )
+    private List<UnidadeProduto> unidadesUsadas = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "veiculo_id")
+    private Veiculo veiculo;
+
+
 }

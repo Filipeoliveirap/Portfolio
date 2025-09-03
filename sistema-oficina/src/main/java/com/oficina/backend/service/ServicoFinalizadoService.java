@@ -1,13 +1,16 @@
 package com.oficina.backend.service;
 
+import com.oficina.backend.DTO.FinalizarServicoDTO;
+import com.oficina.backend.model.UnidadeProduto;
+import com.oficina.backend.model.Servico;
+import com.oficina.backend.model.ServicoFinalizado;
+import com.oficina.backend.repository.ServicoFinalizadoRepository;
+import com.oficina.backend.repository.ServicoRepository;
+import com.oficina.backend.repository.UnidadeProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import com.oficina.backend.model.Servico;
-import com.oficina.backend.model.ServicoFinalizado;
-import com.oficina.backend.repository.ServicoRepository;
-import com.oficina.backend.repository.ServicoFinalizadoRepository;
 
 import java.time.*;
 import java.time.temporal.TemporalAdjusters;
@@ -23,19 +26,19 @@ public class ServicoFinalizadoService {
     @Autowired
     private ServicoRepository servicoRepository;
 
+    @Autowired
+    private UnidadeProdutoRepository unidadeProdutoRepository;
+
+    // Listar serviços finalizados com filtros e paginação
     public Page<ServicoFinalizado> buscarServicosFinalizados(String termo, LocalDate inicio, LocalDate fim, String periodo, Pageable pageable) {
         LocalDateTime dataInicio = null;
         LocalDateTime dataFim = null;
 
-        // Prioriza filtro por intervalo de datas, se ambos informados
         if (inicio != null && fim != null) {
             dataInicio = inicio.atStartOfDay();
             dataFim = fim.atTime(LocalTime.MAX);
-        }
-        // Se intervalo não informado, aplica filtro por período, caso seja válido
-        else if (periodo != null && !periodo.trim().isEmpty()) {
+        } else if (periodo != null && !periodo.trim().isEmpty()) {
             LocalDate hoje = LocalDate.now();
-
             switch (periodo.toLowerCase()) {
                 case "semana":
                     dataInicio = hoje.with(DayOfWeek.MONDAY).atStartOfDay();
@@ -50,19 +53,13 @@ public class ServicoFinalizadoService {
                     dataFim = hoje.withDayOfYear(hoje.lengthOfYear()).atTime(LocalTime.MAX);
                     break;
                 case "todos":
-                    // Sem filtro por data: retorna todos os serviços finalizados
-                    dataInicio = null;
-                    dataFim = null;
-                    break;
                 default:
-                    // Qualquer outro valor inválido, não filtra por data
                     dataInicio = null;
                     dataFim = null;
                     break;
             }
         }
 
-        // Ajusta o termo para null se estiver vazio, para não filtrar
         if (termo != null && termo.trim().isEmpty()) {
             termo = null;
         }
@@ -70,30 +67,48 @@ public class ServicoFinalizadoService {
         return servicoFinalizadoRepository.buscarComFiltros(termo, dataInicio, dataFim, pageable);
     }
 
+    // Finalizar serviço e criar registro em ServicoFinalizado
+    public boolean finalizarServico(Long id, FinalizarServicoDTO dto) {
+        Optional<Servico> servicoOpt = servicoRepository.findById(id);
+        if (servicoOpt.isEmpty()) {
+            return false;
+        }
 
+        Servico servico = servicoOpt.get();
 
-    public boolean finalizarServico(Long id) {
-        Optional<Servico> optionalServico = servicoRepository.findById(id);
-        if (optionalServico.isEmpty()) return false;
-
-        Servico servico = optionalServico.get();
         ServicoFinalizado finalizado = new ServicoFinalizado();
-
+        finalizado.setCliente(servico.getCliente());
+        finalizado.setVeiculo(servico.getVeiculo());
         finalizado.setDescricao(servico.getDescricao());
         finalizado.setPreco(servico.getPreco());
-        finalizado.setDataInicio(servico.getData()); // deve ser LocalDateTime
-        finalizado.setDataFinalizacao(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")));
-        finalizado.setCpfCliente(servico.getCliente().getCpf());
-        finalizado.setNomeCliente(servico.getCliente().getNome());
-        finalizado.setObservacoes("");
+        finalizado.setDataInicio(servico.getData());
+        finalizado.setDataFinalizacao(LocalDateTime.now());
+        finalizado.setDetalhesFinalizacao(dto.getDetalhesFinalizacao());
+        finalizado.setDataGarantia(dto.getDataGarantia());
+        finalizado.setClausulaGarantia(dto.getClausulaGarantia());
+        finalizado.setServicoOriginal(servico);
+
+        if (dto.getUnidadesUsadasIds() != null && !dto.getUnidadesUsadasIds().isEmpty()) {
+            List<UnidadeProduto> unidades = unidadeProdutoRepository.findAllById(dto.getUnidadesUsadasIds());
+            unidades.forEach(u -> u.setStatus(UnidadeProduto.StatusUnidade.UTILIZADO));
+            unidadeProdutoRepository.saveAll(unidades);
+            finalizado.setUnidadesUsadas(unidades);
+        }
 
         servicoFinalizadoRepository.save(finalizado);
-        servicoRepository.deleteById(id);
+        servicoRepository.delete(servico);
 
         return true;
     }
 
+    // Buscar serviço finalizado por ID
     public Optional<ServicoFinalizado> buscarPorId(Long id) {
         return servicoFinalizadoRepository.findById(id);
+    }
+
+    // Buscar o último ServicoFinalizado por serviço original
+    public ServicoFinalizado buscarUltimoFinalizadoPorServicoOriginal(Long servicoId) {
+        return servicoFinalizadoRepository.findTopByServicoOriginalIdOrderByDataFinalizacaoDesc(servicoId)
+                .orElseThrow(() -> new RuntimeException("Serviço finalizado não encontrado para o serviço original com id: " + servicoId));
     }
 }

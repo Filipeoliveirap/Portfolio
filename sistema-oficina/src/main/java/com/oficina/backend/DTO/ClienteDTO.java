@@ -1,9 +1,12 @@
 package com.oficina.backend.DTO;
 
 import com.oficina.backend.model.Cliente;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
 public class ClienteDTO {
     private Long id;
     private String nome;

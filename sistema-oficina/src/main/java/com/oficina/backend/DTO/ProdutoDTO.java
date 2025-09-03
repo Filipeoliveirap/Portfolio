@@ -1,14 +1,19 @@
 package com.oficina.backend.DTO;
 
+import com.oficina.backend.model.Produto;
+import com.oficina.backend.model.UnidadeProduto;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProdutoDTO {
     private Long id;
 
@@ -28,52 +33,29 @@ public class ProdutoDTO {
 
     private String observacao;
 
+    @jakarta.validation.constraints.Pattern(
+            regexp = "disponivel|vendido|utilizado",
+            message = "O status deve ser 'disponivel', 'vendido' ou 'utilizado'"
+    )
+    private String status = "disponivel";
 
-    public Long getId() {
-        return id;
+    public ProdutoDTO(Produto produto) {
+        this.id = produto.getId();
+        this.nome = produto.getNome();
+        this.quantidade = (int) produto.getUnidades().stream()
+                .filter(u -> u.getStatus() == UnidadeProduto.StatusUnidade.DISPONIVEL)
+                .count();
+        this.precoUnitario = produto.getPrecoUnitario();
+        this.categoria = produto.getCategoria();
+        this.observacao = produto.getObservacao();
+        // converter status para string minúscula, por exemplo "disponivel"
+        this.status = produto.getUnidades().stream()
+                .filter(u -> u.getStatus() == UnidadeProduto.StatusUnidade.DISPONIVEL)
+                .findAny()
+                .map(u -> u.getStatus().name().toLowerCase())
+                .orElse("indefinido");
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
 
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public Integer getQuantidade() {
-        return quantidade;
-    }
-
-    public void setQuantidade(Integer quantidade) {
-        this.quantidade = quantidade;
-    }
-
-    public BigDecimal getPrecoUnitario() {
-        return precoUnitario;
-    }
-
-    public void setPrecoUnitario(BigDecimal precoUnitario) {
-        this.precoUnitario = precoUnitario;
-    }
-
-    public String getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
-    }
-
-    public String getObservacao() {
-        return observacao;
-    }
-
-    public void setObservacao(String observacoes) {
-        this.observacao = observacoes;
-    }
 }
+

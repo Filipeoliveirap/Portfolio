@@ -1,10 +1,19 @@
 package com.oficina.backend.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "servicos_finalizados")
 public class ServicoFinalizado {
     @Id
@@ -12,6 +21,8 @@ public class ServicoFinalizado {
     private Long id;
 
     private String descricao;
+
+    private String detalhesFinalizacao;
 
     private BigDecimal preco;
 
@@ -24,75 +35,29 @@ public class ServicoFinalizado {
     private String cpfCliente;
 
     private String observacoes;
+    private LocalDate dataGarantia;
+    private String clausulaGarantia;
+
 
     @ManyToOne
     private Cliente cliente;
+    @ManyToMany
+    @JoinTable(
+            name = "servico_finalizado_unidade",
+            joinColumns = @JoinColumn(name = "servico_finalizado_id"),
+            inverseJoinColumns = @JoinColumn(name = "unidade_id")
+    )
+    private List<UnidadeProduto> unidadesUsadas;
+
+    // Caso queira manter referência ao serviço original
+    @ManyToOne
+    private Servico servicoOriginal;
+    @ManyToOne
+    @JoinColumn(name = "veiculo_id")
+    private Veiculo veiculo;
 
 
-    // Getters e setters
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
-
-    public BigDecimal getPreco() {
-        return preco;
-    }
-
-    public void setPreco(BigDecimal preco) {
-        this.preco = preco;
-    }
-
-    public LocalDateTime getDataInicio() {return dataInicio;}
-
-    public void setDataInicio(LocalDateTime dataInicio) {this.dataInicio = dataInicio;}
-
-    public LocalDateTime getDataFinalizacao() {
-        return dataFinalizacao;
-    }
-
-    public void setDataFinalizacao(LocalDateTime dataFinalizacao) {
-        this.dataFinalizacao = dataFinalizacao;
-    }
-
-    public String getNomeCliente() {
-        return nomeCliente;
-    }
-
-    public void setNomeCliente(String nomeCliente) {
-        this.nomeCliente = nomeCliente;
-    }
-
-    public String getCpfCliente() {
-        return cpfCliente;
-    }
-
-    public void setCpfCliente(String cpfCliente) {
-        this.cpfCliente = cpfCliente;
-    }
-
-    public String getObservacoes() {
-        return observacoes;
-    }
-
-    public void setObservacoes(String observacoes) {
-        this.observacoes = observacoes;
-    }
-
-    public Cliente getCliente() {return cliente;}
-
-    public void setCliente(Cliente cliente) {this.cliente = cliente;}
 
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ServicoFinalizadoRepository extends JpaRepository<ServicoFinalizado, Long> {
@@ -34,6 +35,7 @@ public interface ServicoFinalizadoRepository extends JpaRepository<ServicoFinali
             "GROUP BY mes " +
             "ORDER BY mes", nativeQuery = true)
     List<Object[]> contarServicosPorMes();
+    Optional<ServicoFinalizado> findTopByServicoOriginalIdOrderByDataFinalizacaoDesc(Long servicoId);
 
     @Query(value = "SELECT strftime('%Y-%m', data_finalizacao), COUNT(*) " +
             "FROM servico_finalizado " +

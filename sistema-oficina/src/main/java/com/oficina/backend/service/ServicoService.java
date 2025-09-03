@@ -1,44 +1,47 @@
 package com.oficina.backend.service;
 
-
+import com.oficina.backend.DTO.ServicoRequestDTO;
+import com.oficina.backend.model.Cliente;
 import com.oficina.backend.model.Produto;
 import com.oficina.backend.model.Servico;
+import com.oficina.backend.model.Veiculo;
 import com.oficina.backend.repository.ClienteRepository;
 import com.oficina.backend.repository.ProdutoRepository;
 import com.oficina.backend.repository.ServicoRepository;
-import com.oficina.backend.DTO.ServicoRequestDTO;
+import com.oficina.backend.repository.VeiculoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.oficina.backend.model.Cliente;
 
-
-import java.util.ArrayList;
-import java.util.stream.Collectors;
-import java.util.Optional;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ServicoService {
+
     @Autowired
     private ServicoRepository servicoRepository;
 
-
     @Autowired
     private ProdutoRepository produtoRepository;
+
     @Autowired
     private ClienteRepository clienteRepository;
 
-    //salvar servico com controle de estoque
+    @Autowired
+    private VeiculoRepository veiculoRepository;
+
+    // Salvar serviço com produtos e cliente
     public Servico salvar(Servico servico) {
-        // Garante que o cliente está salvo antes de salvar o serviço
+        // Garantir cliente salvo
         Cliente cliente = servico.getCliente();
         if (cliente.getId() == null) {
-            cliente = clienteRepository.save(cliente); // salve e atualize a referência
-            servico.setCliente(cliente); // atualiza o cliente dentro do serviço
+            cliente = clienteRepository.save(cliente);
+            servico.setCliente(cliente);
         }
 
-        // Verifica estoque de todos os produtos
+        // Validar estoque
         servico.getProdutos().forEach(produtoUsado -> {
             Produto produto = produtoRepository.findById(produtoUsado.getId())
                     .orElseThrow(() -> new RuntimeException("Produto com id: " + produtoUsado.getId() + " não encontrado"));
@@ -47,7 +50,7 @@ public class ServicoService {
             }
         });
 
-        // Diminui o estoque
+        // Atualizar estoque
         servico.getProdutos().forEach(produtoUsado -> {
             Produto produto = produtoRepository.findById(produtoUsado.getId()).get();
             produto.setQuantidade(produto.getQuantidade() - produtoUsado.getQuantidade());
@@ -57,54 +60,52 @@ public class ServicoService {
         return servicoRepository.save(servico);
     }
 
-
-    //buscar todos os servicos
+    // Listar todos os serviços
     public List<Servico> listarServicos() {
         return servicoRepository.findAll();
     }
 
-    //buscar por id
+    // Buscar por ID
     public Optional<Servico> buscarPorId(Long id) {
         return servicoRepository.findById(id);
     }
 
-    //deletar servico
+    // Deletar serviço
     public void deletar(Long id) {
         servicoRepository.deleteById(id);
     }
 
-    //buscar por nome do cliente
+    // Buscar por nome do cliente
     public List<Servico> buscarPorNomeDoCliente(String nome) {
         return servicoRepository.findByCliente_NomeContainingIgnoreCase(nome);
     }
 
-    //buscar por intervalo de datas
+    // Buscar por período
     public List<Servico> buscarPorPeriodo(LocalDate inicio, LocalDate fim) {
         return servicoRepository.findByDataBetween(inicio, fim);
     }
 
-    //atualizar servico
+    // Atualizar serviço
     public Servico atualizar(Long id, Servico servicoAtualizado) {
         return servicoRepository.findById(id).map(servicoExistente -> {
 
-            // Repor o estoque dos produtos antigos
+            // Repor estoque dos produtos antigos
             servicoExistente.getProdutos().forEach(produtoUsado -> {
                 Produto produto = produtoRepository.findById(produtoUsado.getId()).orElseThrow();
                 produto.setQuantidade(produto.getQuantidade() + produtoUsado.getQuantidade());
                 produtoRepository.save(produto);
             });
 
-            // Verificar se os novos produtos têm estoque suficiente
+            // Validar novos produtos
             servicoAtualizado.getProdutos().forEach(produtoNovo -> {
-                Produto produto = produtoRepository.findById(produtoNovo.getId()).orElseThrow(() ->
-                        new RuntimeException("Produto com id " + produtoNovo.getId() + " não encontrado"));
-
+                Produto produto = produtoRepository.findById(produtoNovo.getId())
+                        .orElseThrow(() -> new RuntimeException("Produto com id " + produtoNovo.getId() + " não encontrado"));
                 if (produto.getQuantidade() < produtoNovo.getQuantidade()) {
                     throw new RuntimeException("Estoque insuficiente para o produto: " + produto.getNome());
                 }
             });
 
-            // Atualizar o estoque com os novos produtos
+            // Atualizar estoque com novos produtos
             servicoAtualizado.getProdutos().forEach(produtoNovo -> {
                 Produto produto = produtoRepository.findById(produtoNovo.getId()).get();
                 produto.setQuantidade(produto.getQuantidade() - produtoNovo.getQuantidade());
@@ -118,32 +119,21 @@ public class ServicoService {
             servicoExistente.setCliente(servicoAtualizado.getCliente());
             servicoExistente.setProdutos(servicoAtualizado.getProdutos());
 
+            // ✅ Atualizar veículo
+            if (servicoAtualizado.getVeiculo() != null && servicoAtualizado.getVeiculo().getId() != null) {
+                Veiculo veiculo = veiculoRepository.findById(servicoAtualizado.getVeiculo().getId())
+                        .orElseThrow(() -> new RuntimeException("Veículo não encontrado"));
+                servicoExistente.setVeiculo(veiculo);
+            } else {
+                servicoExistente.setVeiculo(null);
+            }
+
             return servicoRepository.save(servicoExistente);
 
         }).orElseThrow(() -> new RuntimeException("Serviço com id " + id + " não encontrado"));
     }
 
-    //buscar pela descricao do servico
-    public List<Servico> buscarPorDescricao(String descricao) {
-        return servicoRepository.findByDescricaoContainingIgnoreCase(descricao);
-    }
-
-    //buscar por cpf
-    public List<Servico> buscarPorCpfCliente(String cpf) {
-        return servicoRepository.findByClienteCpfContaining(cpf);
-    }
-
-    public List<Servico> buscarPorPeriodoECliente(LocalDate inicio, LocalDate fim, String nomeCliente) {
-        return servicoRepository.findByDataBetween(inicio, fim);
-
-
-    }
-
-    public List<Servico> getUltimosServicos(int limite) {
-        return servicoRepository.findUltimosServicos().stream()
-                .limit(limite)
-                .collect(Collectors.toList());
-    }
+    // Salvar via DTO
     public Servico salvarcomDTO(ServicoRequestDTO dto) {
         Cliente cliente = clienteRepository.findById(dto.getClienteId())
                 .orElseThrow(() -> new RuntimeException("Cliente não encontrado com id: " + dto.getClienteId()));
@@ -154,17 +144,25 @@ public class ServicoService {
         servico.setData(dto.getData().atStartOfDay());
         servico.setCliente(cliente);
 
+        // Associar veículo
+        if (dto.getVeiculoId() != null) {
+            Veiculo veiculo = veiculoRepository.findById(dto.getVeiculoId())
+                    .orElseThrow(() -> new RuntimeException("Veículo não encontrado com id: " + dto.getVeiculoId()));
+            servico.setVeiculo(veiculo);
+        }
+
         return servicoRepository.save(servico);
     }
 
+    // Buscar por descrição ou CPF do cliente
     public List<Servico> buscarPorDescricaoOuCpf(String termo) {
         return servicoRepository.findByDescricaoContainingIgnoreCaseOrClienteCpfContaining(termo, termo);
     }
 
-
-
-
-
-
-
+    // Buscar últimos serviços
+    public List<Servico> getUltimosServicos(int limite) {
+        return servicoRepository.findUltimosServicos().stream()
+                .limit(limite)
+                .collect(Collectors.toList());
+    }
 }

@@ -1,12 +1,16 @@
 package com.oficina.backend.controller;
 
-import com.oficina.backend.model.Veiculo;
 import com.oficina.backend.model.Cliente;
+import com.oficina.backend.model.Veiculo;
 import com.oficina.backend.repository.ClienteRepository;
 import com.oficina.backend.repository.VeiculoRepository;
 import com.oficina.backend.service.VeiculoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,10 +45,34 @@ public class VeiculoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
     }
 
+    // Listar veículos com paginação e filtro opcional
     @GetMapping
-    public ResponseEntity<List<Veiculo>> listarVeiculos() {
-        List<Veiculo> veiculos = veiculoService.listarTodos();
-        return ResponseEntity.ok(veiculos);
+    public ResponseEntity<Page<Veiculo>> listarVeiculos(
+            @RequestParam(defaultValue = "0") int pagina,
+            @RequestParam(defaultValue = "10") int tamanho,
+            @RequestParam(defaultValue = "") String filtro,
+            @RequestParam(defaultValue = "modelo") String tipoFiltro
+    ) {
+        Pageable pageable = PageRequest.of(pagina, tamanho, Sort.by("modelo").ascending());
+
+        Page<Veiculo> resultado;
+
+        if (filtro.isEmpty()) {
+            resultado = veiculoRepository.findAll(pageable);
+        } else {
+            switch (tipoFiltro.toLowerCase()) {
+                case "placa":
+                    resultado = veiculoRepository.findByPlacaContainingIgnoreCase(filtro, pageable);
+                    break;
+                case "cpfcliente":
+                    resultado = veiculoRepository.findByClienteCpfContaining(filtro, pageable);
+                    break;
+                default: // modelo
+                    resultado = veiculoRepository.findByModeloContainingIgnoreCase(filtro, pageable);
+            }
+        }
+
+        return ResponseEntity.ok(resultado);
     }
 
     @GetMapping("/{id}")
@@ -73,28 +101,11 @@ public class VeiculoController {
         }
     }
 
+    // Buscar veículos de um cliente pelo CPF (sem paginação)
     @GetMapping("/buscar/cpf")
     public ResponseEntity<List<Veiculo>> buscarPorCpf(@RequestParam String cpf) {
         List<Veiculo> veiculos = veiculoService.buscarPorCpfCliente(cpf);
         return ResponseEntity.ok(veiculos);
     }
 
-    @GetMapping("/buscar/modelo")
-    public ResponseEntity<List<Veiculo>> buscarPorModelo(@RequestParam String modelo) {
-        List<Veiculo> veiculos = veiculoService.buscarPorModelo(modelo);
-        return ResponseEntity.ok(veiculos);
-    }
-
-    @GetMapping("/buscar/placa")
-    public ResponseEntity<List<Veiculo>> buscarPorPlaca(@RequestParam String placa) {
-        List<Veiculo> veiculos = veiculoService.buscarPorPlaca(placa);
-        return ResponseEntity.ok(veiculos);
-    }
-
-
-    @GetMapping("/buscar/cliente")
-    public ResponseEntity<List<Veiculo>> buscarPorNomeCliente(@RequestParam String nome) {
-        List<Veiculo> veiculos = veiculoService.buscarPorNomeCliente(nome);
-        return ResponseEntity.ok(veiculos);
-    }
 }

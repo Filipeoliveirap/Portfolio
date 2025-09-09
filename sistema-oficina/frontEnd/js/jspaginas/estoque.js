@@ -130,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!dados.content || dados.content.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="7" class="text-center p-4 text-white bg-black bg-opacity-50 rounded">
+            <td colspan="8" class="text-center p-4 text-white bg-black bg-opacity-50 rounded">
               Nenhum produto encontrado ou cadastrado.
             </td>
           </tr>
@@ -163,34 +163,55 @@ document.addEventListener("DOMContentLoaded", () => {
             produto.observacao || "—"
           }</td>
           <td class="px-5 py-3 border-b border-gray-700 text-sm">
-            <select onchange="atualizarStatusProduto(${
-              produto.id
-            }, this.value)" 
-                    class="bg-transparent text-white border border-gray-600 rounded px-2 py-1">
-              <option value="disponivel" ${
-                produto.status?.toLowerCase() === "disponivel" ? "selected" : ""
-              }>Disponível</option>
-              <option value="vendido" ${
-                produto.status?.toLowerCase() === "vendido" ? "selected" : ""
-              }>Vendido</option>
-              <option value="utilizado" ${
-                produto.status?.toLowerCase() === "utilizado" ? "selected" : ""
-              }>Utilizado</option>
-            </select>
+            <span class="
+              px-3 py-1 rounded-full text-xs font-semibold
+              ${
+                produto.status?.toLowerCase() === "disponivel"
+                  ? "bg-green-600 text-white"
+                  : ""
+              }
+              ${
+                produto.status?.toLowerCase() === "vendido"
+                  ? "bg-red-600 text-white"
+                  : ""
+              }
+              ${
+                produto.status?.toLowerCase() === "utilizado"
+                  ? "bg-yellow-500 text-black"
+                  : ""
+              }
+            ">
+              ${
+                produto.status
+                  ? produto.status.charAt(0).toUpperCase() +
+                    produto.status.slice(1).toLowerCase()
+                  : "—"
+              }
+            </span>
           </td>
           <td class="px-5 py-3 border-b border-gray-700 text-sm text-white">
             <div class="flex items-center space-x-2 justify-center h-full">
-              <button onclick="editarProduto(${
-                produto.id
-              })" class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-1 px-3 rounded shadow">
-                <i class="fas fa-edit"></i>
-              </button>
-              <button onclick="abrirModalVenda(${produto.id}, ${
-          produto.quantidade
-        }, ${produto.precoUnitario})"
-                class="bg-green-600 hover:bg-green-700 text-white font-semibold py-1 px-3 rounded shadow">
-                <i class="fas fa-dollar-sign"></i>
-              </button>
+              ${
+                produto.status?.toLowerCase() === "disponivel"
+                  ? `
+                <button onclick="editarProduto(${produto.id})" class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-1 px-3 rounded shadow">
+                  <i class="fas fa-edit"></i>
+                </button>
+              `
+                  : ""
+              }
+
+              ${
+                produto.status?.toLowerCase() === "disponivel"
+                  ? `
+                <button onclick="abrirModalVenda(${produto.id}, ${produto.quantidade}, ${produto.precoUnitario})"
+                  class="bg-green-600 hover:bg-green-700 text-white font-semibold py-1 px-3 rounded shadow">
+                  <i class="fas fa-dollar-sign"></i>
+                </button>
+              `
+                  : ""
+              }
+
               <button onclick="excluirProduto(${
                 produto.id
               })" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded shadow">

@@ -17,7 +17,7 @@ filtroPeriodo.addEventListener("change", (e) => {
     document.getElementById("data-inicio").value = "";
     document.getElementById("data-fim").value = "";
   }
-  paginaAtual = 0; 
+  paginaAtual = 0;
 });
 
 filtroPeriodo.addEventListener("change", (e) => {
@@ -25,7 +25,7 @@ filtroPeriodo.addEventListener("change", (e) => {
     document.getElementById("data-inicio").value = "";
     document.getElementById("data-fim").value = "";
   }
-  paginaAtual = 0; 
+  paginaAtual = 0;
 });
 
 filtroPeriodo.addEventListener("change", (e) => {
@@ -33,7 +33,7 @@ filtroPeriodo.addEventListener("change", (e) => {
     document.getElementById("data-inicio").value = "";
     document.getElementById("data-fim").value = "";
   }
-  paginaAtual = 0; 
+  paginaAtual = 0;
 });
 
 filtroPeriodo.addEventListener("change", (e) => {
@@ -41,7 +41,7 @@ filtroPeriodo.addEventListener("change", (e) => {
     document.getElementById("data-inicio").value = "";
     document.getElementById("data-fim").value = "";
   }
-  paginaAtual = 0; 
+  paginaAtual = 0;
 });
 
 function formatarDataBrasileira(dataIso) {
@@ -87,7 +87,6 @@ function renderizarPaginacao() {
   }
 }
 
-
 buscarServicosFinalizados();
 
 async function buscarServicosFinalizados() {
@@ -96,12 +95,10 @@ async function buscarServicosFinalizados() {
 
   const url = new URL("http://localhost:8080/servicos-finalizados");
 
-  
   let pagina = paginaAtual;
   let tamanho = tamanhoPagina;
 
   if (filtrosAtuais.periodo === "todos") {
-    
     document.getElementById("data-inicio").value = "";
     document.getElementById("data-fim").value = "";
 
@@ -111,11 +108,9 @@ async function buscarServicosFinalizados() {
     pagina = 0;
     tamanho = 9999;
 
-    
     const paginacao = document.getElementById("paginacao");
     if (paginacao) paginacao.style.display = "none";
   } else {
-    
     filtrosAtuais.inicio = formatarDataParaEnvio(
       document.getElementById("data-inicio").value
     );
@@ -123,7 +118,6 @@ async function buscarServicosFinalizados() {
       document.getElementById("data-fim").value
     );
 
-    
     const paginacao = document.getElementById("paginacao");
     if (paginacao) paginacao.style.display = "flex";
   }
@@ -146,7 +140,7 @@ async function buscarServicosFinalizados() {
     if (!response.ok) throw new Error("Erro ao buscar serviços finalizados");
 
     const dados = await response.json();
-    const servicos = dados.content || dados; 
+    const servicos = dados.content || dados;
     totalPaginas = dados.totalPages || 1;
 
     carregarTabelaComDados(servicos);
@@ -157,7 +151,7 @@ async function buscarServicosFinalizados() {
   }
 
   if (filtrosAtuais.periodo !== "todos") {
-    renderizarPaginacao(); 
+    renderizarPaginacao();
   }
 }
 
@@ -165,11 +159,29 @@ function carregarTabelaComDados(servicos) {
   tabelaFinalizados.innerHTML = "";
 
   if (servicos.length === 0) {
-    tabelaFinalizados.innerHTML = `<tr><td colspan="8" class="text-center p-4 text-white bg-black bg-opacity-50 rounded">Nenhum serviço finalizado encontrado.</td></tr>`;
+    tabelaFinalizados.innerHTML = `<tr><td colspan="12" class="text-center p-4 text-white bg-black bg-opacity-50 rounded">Nenhum serviço finalizado encontrado.</td></tr>`;
     return;
   }
 
   servicos.forEach((servico) => {
+    console.log(servico);
+
+    // Montar lista de produtos usados
+    const produtosHtml =
+      servico.quantidadeProdutosUsados &&
+      servico.quantidadeProdutosUsados.length > 0
+        ? servico.quantidadeProdutosUsados
+            .map(
+              (
+                p
+              ) => `<span class="inline-block bg-gray-800 text-white text-xs font-semibold px-2 py-1 rounded-full mr-1 mb-1">
+                ${p.nome} - x${p.quantidade}
+              </span>`
+            )
+            .join("")
+        : '<span class="text-gray-400">Nenhum</span>';
+
+    // Agora monta a linha da tabela
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td class="px-5 py-3 border-b border-gray-700">${servico.descricao}</td>
@@ -182,10 +194,28 @@ function carregarTabelaComDados(servicos) {
       <td class="px-5 py-3 border-b border-gray-700">${formatarDataBrasileira(
         servico.dataFinalizacao
       )}</td>
-      <td class="px-5 py-3 border-b border-gray-700">${servico.nomeCliente}</td>
-      <td class="px-5 py-3 border-b border-gray-700">${servico.cpfCliente}</td>
       <td class="px-5 py-3 border-b border-gray-700">${
-        servico.observacoes || ""
+        servico.cliente?.nome || "-"
+      }</td>
+      <td class="px-5 py-3 border-b border-gray-700">${
+        servico.cliente?.cpf || "-"
+      }</td>
+      <td class="px-5 py-3 border-b border-gray-700">${
+        servico.veiculo
+          ? `${servico.veiculo.modelo} - ${servico.veiculo.placa}`
+          : "-"
+      }</td>
+      <td class="px-5 py-3 border-b border-gray-700">${produtosHtml}</td>
+      <td class="px-5 py-3 border-b border-gray-700">${
+        servico.clausulaGarantia || ""
+      }</td>
+      <td class="px-5 py-3 border-b border-gray-700">${
+        servico.dataGarantia ? formatarDataBrasileira(servico.dataGarantia) : ""
+      }</td>
+      <td class="px-5 py-3 border-b border-gray-700">${
+        servico.observacoes && servico.observacoes.trim() !== ""
+          ? servico.observacoes
+          : "-"
       }</td>
       <td class="px-5 py-3 border-b border-gray-700">
         <div class="flex gap-2">
@@ -343,7 +373,7 @@ async function adicionarObservacao(id) {
     if (!response.ok) throw new Error("Erro ao adicionar observação");
 
     alertaSucesso("Observação adicionada com sucesso!");
-    buscarServicosFinalizados(); 
+    buscarServicosFinalizados();
   } catch (error) {
     alertaErro(error.message);
   }
@@ -366,7 +396,7 @@ async function excluirServico(id) {
     if (!response.ok) throw new Error("Erro ao excluir serviço");
 
     alertaSucesso("Serviço excluído com sucesso!");
-    buscarServicosFinalizados(); 
+    buscarServicosFinalizados();
   } catch (error) {
     alert(error.message);
   }

@@ -1,5 +1,6 @@
 package com.oficina.backend.controller;
 
+import com.oficina.backend.DTO.VeiculoResumidoDTO;
 import com.oficina.backend.model.Cliente;
 import com.oficina.backend.model.Veiculo;
 import com.oficina.backend.repository.ClienteRepository;
@@ -100,6 +101,15 @@ public class VeiculoController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+    @GetMapping("/resumido")
+    public ResponseEntity<List<VeiculoResumidoDTO>> listarVeiculosResumidos() {
+        List<Veiculo> veiculos = veiculoRepository.findAll();
+        List<VeiculoResumidoDTO> dtos = veiculos.stream()
+                .map(VeiculoResumidoDTO::new)
+                .toList();
+        return ResponseEntity.ok(dtos);
+    }
+
 
     // Buscar veículos de um cliente pelo CPF (sem paginação)
     @GetMapping("/buscar/cpf")

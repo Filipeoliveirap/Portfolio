@@ -1,18 +1,15 @@
 package com.oficina.backend.service;
 
-import com.oficina.backend.DTO.ServicoRequestDTO;
-import com.oficina.backend.model.Cliente;
-import com.oficina.backend.model.Produto;
-import com.oficina.backend.model.Servico;
-import com.oficina.backend.model.Veiculo;
-import com.oficina.backend.repository.ClienteRepository;
-import com.oficina.backend.repository.ProdutoRepository;
-import com.oficina.backend.repository.ServicoRepository;
-import com.oficina.backend.repository.VeiculoRepository;
+import com.oficina.backend.DTO.*;
+import com.oficina.backend.model.*;
+import com.oficina.backend.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,43 +24,51 @@ public class ServicoService {
     private ProdutoRepository produtoRepository;
 
     @Autowired
+    private UnidadeProdutoRepository unidadeProdutoRepository;
+
+    @Autowired
     private ClienteRepository clienteRepository;
 
     @Autowired
     private VeiculoRepository veiculoRepository;
 
-    // Salvar serviço com produtos e cliente
-    public Servico salvar(Servico servico) {
-        // Garantir cliente salvo
-        Cliente cliente = servico.getCliente();
-        if (cliente.getId() == null) {
-            cliente = clienteRepository.save(cliente);
-            servico.setCliente(cliente);
-        }
-
-        // Validar estoque
-        servico.getProdutos().forEach(produtoUsado -> {
-            Produto produto = produtoRepository.findById(produtoUsado.getId())
-                    .orElseThrow(() -> new RuntimeException("Produto com id: " + produtoUsado.getId() + " não encontrado"));
-            if (produto.getQuantidade() < produtoUsado.getQuantidade()) {
-                throw new RuntimeException("Estoque insuficiente para produto: " + produto.getNome());
-            }
-        });
-
-        // Atualizar estoque
-        servico.getProdutos().forEach(produtoUsado -> {
-            Produto produto = produtoRepository.findById(produtoUsado.getId()).get();
-            produto.setQuantidade(produto.getQuantidade() - produtoUsado.getQuantidade());
-            produtoRepository.save(produto);
-        });
-
-        return servicoRepository.save(servico);
-    }
 
     // Listar todos os serviços
-    public List<Servico> listarServicos() {
-        return servicoRepository.findAll();
+    public List<ServicoResponseDTO> listarServicos() {
+        return servicoRepository.findAll().stream()
+                .map(servico -> {
+                    // Mapear produtos usados
+                    List<ProdutoUsadoResponseDTO> produtosDTO = new ArrayList<>();
+                    if (servico.getProdutos() != null && !servico.getProdutos().isEmpty()) {
+                        for (Produto produto : servico.getProdutos()) {
+                            // Contar quantas unidades do produto foram usadas
+                            long quantidadeUsada = servico.getUnidadesUsadas().stream()
+                                    .filter(u -> u.getProduto().getId().equals(produto.getId()))
+                                    .count();
+
+                            produtosDTO.add(new ProdutoUsadoResponseDTO(
+                                    produto.getId(),
+                                    produto.getNome(),
+                                    (int) quantidadeUsada
+                            ));
+                        }
+                    }
+
+                    return new ServicoResponseDTO(
+                            servico.getId(),
+                            servico.getDescricao(),
+                            servico.getPreco(),
+                            servico.getData(),
+                            new ClienteResumidoDTO(servico.getCliente().getId(), servico.getCliente().getNome(), servico.getCliente().getCpf()),
+                            servico.getVeiculo() != null
+                                    ? new VeiculoResumidoDTO(servico.getVeiculo().getId(), servico.getVeiculo().getModelo(), servico.getVeiculo().getPlaca())
+                                    : null,
+                            produtosDTO
+                    );
+                }).toList();
     }
+
+
 
     // Buscar por ID
     public Optional<Servico> buscarPorId(Long id) {
@@ -119,7 +124,7 @@ public class ServicoService {
             servicoExistente.setCliente(servicoAtualizado.getCliente());
             servicoExistente.setProdutos(servicoAtualizado.getProdutos());
 
-            // ✅ Atualizar veículo
+            // Atualizar veículo
             if (servicoAtualizado.getVeiculo() != null && servicoAtualizado.getVeiculo().getId() != null) {
                 Veiculo veiculo = veiculoRepository.findById(servicoAtualizado.getVeiculo().getId())
                         .orElseThrow(() -> new RuntimeException("Veículo não encontrado"));
@@ -133,10 +138,15 @@ public class ServicoService {
         }).orElseThrow(() -> new RuntimeException("Serviço com id " + id + " não encontrado"));
     }
 
-    // Salvar via DTO
-    public Servico salvarcomDTO(ServicoRequestDTO dto) {
-        Cliente cliente = clienteRepository.findById(dto.getClienteId())
-                .orElseThrow(() -> new RuntimeException("Cliente não encontrado com id: " + dto.getClienteId()));
+    // Salvar serviço via DTO
+    @Transactional
+    public Servico salvarServico(ServicoRequestDTO dto) {
+        if (dto.getCliente() == null || dto.getCliente().getId() == null) {
+            throw new RuntimeException("Cliente é obrigatório");
+        }
+
+        Cliente cliente = clienteRepository.findById(dto.getCliente().getId())
+                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
 
         Servico servico = new Servico();
         servico.setDescricao(dto.getDescricao());
@@ -144,15 +154,113 @@ public class ServicoService {
         servico.setData(dto.getData().atStartOfDay());
         servico.setCliente(cliente);
 
-        // Associar veículo
-        if (dto.getVeiculoId() != null) {
-            Veiculo veiculo = veiculoRepository.findById(dto.getVeiculoId())
-                    .orElseThrow(() -> new RuntimeException("Veículo não encontrado com id: " + dto.getVeiculoId()));
+        // Veículo opcional
+        if (dto.getVeiculo() != null && dto.getVeiculo().getId() != null) {
+            Veiculo veiculo = veiculoRepository.findById(dto.getVeiculo().getId())
+                    .orElseThrow(() -> new RuntimeException("Veículo não encontrado"));
             servico.setVeiculo(veiculo);
         }
 
+        // Processar produtos usados
+        List<UnidadeProduto> unidadesUsadas = new ArrayList<>();
+        List<Produto> produtosUsados = new ArrayList<>();
+
+        if (dto.getProdutosUsados() != null) {
+            for (ProdutoServicoDTO pDto : dto.getProdutosUsados()) {
+                Produto produto = produtoRepository.findById(pDto.getId())
+                        .orElseThrow(() -> new RuntimeException("Produto não encontrado: id " + pDto.getId()));
+
+                // Buscar unidades disponíveis
+                List<UnidadeProduto> disponiveis = unidadeProdutoRepository
+                        .findByProdutoIdAndStatusOrderByIdAsc(
+                                produto.getId(),
+                                UnidadeProduto.StatusUnidade.DISPONIVEL,
+                                PageRequest.of(0, pDto.getQuantidade())
+                        );
+
+                if (disponiveis.size() < pDto.getQuantidade()) {
+                    throw new RuntimeException("Estoque insuficiente para produto: " + produto.getNome());
+                }
+
+                // Marcar unidades como UTILIZADO
+                disponiveis.forEach(u -> u.setStatus(UnidadeProduto.StatusUnidade.UTILIZADO));
+                unidadeProdutoRepository.saveAll(disponiveis);
+
+                unidadesUsadas.addAll(disponiveis);
+                produtosUsados.add(produto);
+            }
+        }
+
+        servico.setUnidadesUsadas(unidadesUsadas);
+        servico.setProdutos(produtosUsados);
+
         return servicoRepository.save(servico);
     }
+
+    // Atualizar serviço via DTO
+    @Transactional
+    public Servico atualizarComDTO(Long id, ServicoRequestDTO dto) {
+        Servico servicoExistente = servicoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Serviço com id " + id + " não encontrado"));
+
+        // Repor unidades antigas
+        servicoExistente.getUnidadesUsadas()
+                .forEach(u -> u.setStatus(UnidadeProduto.StatusUnidade.DISPONIVEL));
+        unidadeProdutoRepository.saveAll(servicoExistente.getUnidadesUsadas());
+
+        servicoExistente.setDescricao(dto.getDescricao());
+        servicoExistente.setPreco(dto.getPreco());
+        servicoExistente.setData(dto.getData().atStartOfDay());
+
+        if (dto.getCliente() == null || dto.getCliente().getId() == null) {
+            throw new RuntimeException("Cliente é obrigatório");
+        }
+        Cliente cliente = clienteRepository.findById(dto.getCliente().getId())
+                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+        servicoExistente.setCliente(cliente);
+
+        if (dto.getVeiculo() != null && dto.getVeiculo().getId() != null) {
+            Veiculo veiculo = veiculoRepository.findById(dto.getVeiculo().getId())
+                    .orElseThrow(() -> new RuntimeException("Veículo não encontrado"));
+            servicoExistente.setVeiculo(veiculo);
+        } else {
+            servicoExistente.setVeiculo(null);
+        }
+
+        // Alocar novas unidades e produtos
+        List<UnidadeProduto> novasUnidades = new ArrayList<>();
+        List<Produto> novosProdutos = new ArrayList<>();
+
+        if (dto.getProdutosUsados() != null) {
+            for (ProdutoServicoDTO pDto : dto.getProdutosUsados()) {
+                Produto produto = produtoRepository.findById(pDto.getId())
+                        .orElseThrow(() -> new RuntimeException("Produto não encontrado: id " + pDto.getId()));
+
+                List<UnidadeProduto> disponiveis = unidadeProdutoRepository
+                        .findByProdutoIdAndStatusOrderByIdAsc(
+                                produto.getId(),
+                                UnidadeProduto.StatusUnidade.DISPONIVEL,
+                                PageRequest.of(0, pDto.getQuantidade())
+                        );
+
+                if (disponiveis.size() < pDto.getQuantidade()) {
+                    throw new RuntimeException("Estoque insuficiente para produto: " + produto.getNome());
+                }
+
+                disponiveis.forEach(u -> u.setStatus(UnidadeProduto.StatusUnidade.UTILIZADO));
+                unidadeProdutoRepository.saveAll(disponiveis);
+
+                novasUnidades.addAll(disponiveis);
+                novosProdutos.add(produto);
+            }
+        }
+
+        servicoExistente.setUnidadesUsadas(novasUnidades);
+        servicoExistente.setProdutos(novosProdutos);
+
+        return servicoRepository.save(servicoExistente);
+    }
+
 
     // Buscar por descrição ou CPF do cliente
     public List<Servico> buscarPorDescricaoOuCpf(String termo) {

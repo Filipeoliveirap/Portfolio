@@ -37,25 +37,32 @@ public class ServicoFinalizadoController {
         servicoFinalizadoRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
-
     // Finalizar serviço em andamento
     @PutMapping("/{id}/finalizar")
     public ResponseEntity<ServicoFinalizadoDTO> finalizarServico(
             @PathVariable Long id,
             @RequestBody FinalizarServicoDTO dto) {
+
         try {
-            boolean finalizado = servicoFinalizadoService.finalizarServico(id, dto);
-            if (finalizado) {
-                ServicoFinalizado servico = servicoFinalizadoService.buscarUltimoFinalizadoPorServicoOriginal(id);
-                ServicoFinalizadoDTO resposta = new ServicoFinalizadoDTO(servico);
-                return ResponseEntity.ok(resposta);
-            } else {
+            if (dto.getDetalhesFinalizacao() == null) {
+                dto.setDetalhesFinalizacao("");
+            }
+
+            ServicoFinalizado servicoFinalizado = servicoFinalizadoService.finalizarServico(id, dto);
+
+            if (servicoFinalizado == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
+
+            ServicoFinalizadoDTO resposta = new ServicoFinalizadoDTO(servicoFinalizado);
+            return ResponseEntity.ok(resposta);
+
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 
     // Listar serviços finalizados com filtros e paginação
     @GetMapping
@@ -70,16 +77,30 @@ public class ServicoFinalizadoController {
         Pageable pageable = PageRequest.of(pagina, tamanho);
         Page<ServicoFinalizado> servicos = servicoFinalizadoService.buscarServicosFinalizados(termo, inicio, fim, periodo, pageable);
 
+        // 🔹 Debug: imprimir unidades usadas
+        servicos.getContent().forEach(s -> {
+            System.out.println("Servico: " + s.getDescricao());
+            if (s.getUnidadesUsadas() != null) {
+                s.getUnidadesUsadas().forEach(u -> {
+                    System.out.println(" - Produto: " + u.getProduto().getNome() + " | Status: " + u.getStatus());
+                });
+            } else {
+                System.out.println(" - Nenhuma unidade usada");
+            }
+        });
+
+
         return servicos.map(ServicoFinalizadoDTO::new);
     }
 
-    // Atualizar observações
+    // Atualizar detalhesFinalizacao
     @PatchMapping("/{id}")
-    public ResponseEntity<ServicoFinalizadoDTO> atualizarObservacao(@PathVariable Long id, @RequestBody ServicoFinalizado dadosAtualizados) {
+    public ResponseEntity<ServicoFinalizadoDTO> atualizarDetalhes(@PathVariable Long id, @RequestBody ServicoFinalizado dadosAtualizados) {
         return servicoFinalizadoRepository.findById(id).map(servico -> {
-            servico.setObservacoes(dadosAtualizados.getObservacoes());
+            servico.setDetalhesFinalizacao(dadosAtualizados.getDetalhesFinalizacao());
             servicoFinalizadoRepository.save(servico);
             return ResponseEntity.ok(new ServicoFinalizadoDTO(servico));
         }).orElse(ResponseEntity.notFound().build());
     }
+
 }

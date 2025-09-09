@@ -13,7 +13,7 @@ import java.util.List;
 public class FinalizarServicoDTO {
     private Long servicoId;
     private String detalhesFinalizacao;
-    private List<Long> unidadesUsadasIds;
     private LocalDate dataGarantia;
     private String clausulaGarantia;
 }
+

@@ -20,6 +20,8 @@ public interface ServicoFinalizadoRepository extends JpaRepository<ServicoFinali
     List<ServicoFinalizado> findTop5WithCliente();
 
     @Query("SELECT s FROM ServicoFinalizado s " +
+            "LEFT JOIN FETCH s.unidadesUsadas u " +
+            "LEFT JOIN FETCH u.produto " +
             "WHERE (:termo IS NULL OR LOWER(s.descricao) LIKE LOWER(CONCAT('%', :termo, '%')) OR s.cpfCliente LIKE CONCAT('%', :termo, '%')) " +
             "AND (:dataInicio IS NULL OR s.dataInicio >= :dataInicio) " +
             "AND (:dataFim IS NULL OR s.dataFinalizacao <= :dataFim)")
@@ -27,6 +29,7 @@ public interface ServicoFinalizadoRepository extends JpaRepository<ServicoFinali
                                              @Param("dataInicio") LocalDateTime dataInicio,
                                              @Param("dataFim") LocalDateTime dataFim,
                                              Pageable pageable);
+
 
     List<ServicoFinalizado> findTop5ByOrderByDataFinalizacaoDesc();
 

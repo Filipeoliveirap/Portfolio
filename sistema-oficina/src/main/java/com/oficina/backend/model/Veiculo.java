@@ -21,15 +21,19 @@ public class Veiculo {
     @Column(nullable = false)
     private String cpfCliente;
 
+    @Column
     @NotBlank(message = "O modelo é obrigatório")
     private String modelo;
 
+    @Column(length = 7)
     @NotBlank(message = "A placa é obrigatória")
     private String placa;
 
+    @Column
     @NotNull(message = "O ano é obrigatório")
     private Integer ano;
 
+    @Column
     @NotBlank(message = "A cor é obrigatória")
     private String cor;
 

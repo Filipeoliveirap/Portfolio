@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.*;
 import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,10 +69,10 @@ public class ServicoFinalizadoService {
     }
 
     // Finalizar serviço e criar registro em ServicoFinalizado
-    public boolean finalizarServico(Long id, FinalizarServicoDTO dto) {
+    public ServicoFinalizado finalizarServico(Long id, FinalizarServicoDTO dto) {
         Optional<Servico> servicoOpt = servicoRepository.findById(id);
         if (servicoOpt.isEmpty()) {
-            return false;
+            return null;
         }
 
         Servico servico = servicoOpt.get();
@@ -88,18 +89,26 @@ public class ServicoFinalizadoService {
         finalizado.setClausulaGarantia(dto.getClausulaGarantia());
         finalizado.setServicoOriginal(servico);
 
-        if (dto.getUnidadesUsadasIds() != null && !dto.getUnidadesUsadasIds().isEmpty()) {
-            List<UnidadeProduto> unidades = unidadeProdutoRepository.findAllById(dto.getUnidadesUsadasIds());
-            unidades.forEach(u -> u.setStatus(UnidadeProduto.StatusUnidade.UTILIZADO));
-            unidadeProdutoRepository.saveAll(unidades);
-            finalizado.setUnidadesUsadas(unidades);
+        List<UnidadeProduto> copiaUnidades = new ArrayList<>();
+        for (UnidadeProduto unidade : servico.getUnidadesUsadas()) {
+            UnidadeProduto novaUnidade = new UnidadeProduto();
+            novaUnidade.setProduto(unidade.getProduto());
+            novaUnidade.setStatus(unidade.getStatus());
+            novaUnidade.setServicoFinalizado(finalizado);
+            copiaUnidades.add(novaUnidade);
         }
+        finalizado.setUnidadesUsadas(copiaUnidades);
 
-        servicoFinalizadoRepository.save(finalizado);
+        // Salvar primeiro o finalizado
+        ServicoFinalizado salvo = servicoFinalizadoRepository.save(finalizado);
+
+        // Depois remover o serviço original
         servicoRepository.delete(servico);
 
-        return true;
+        return salvo;
     }
+
+
 
     // Buscar serviço finalizado por ID
     public Optional<ServicoFinalizado> buscarPorId(Long id) {

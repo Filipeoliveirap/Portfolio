@@ -1,5 +1,6 @@
 package com.oficina.backend.controller;
 
+import com.oficina.backend.DTO.ServicoFinalizadoDTO;
 import com.oficina.backend.model.Produto;
 import com.oficina.backend.model.ServicoFinalizado;
 import com.oficina.backend.relatorio.RelatorioProdutoPdfGenerator;
@@ -19,9 +20,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/relatorios")
@@ -33,6 +34,7 @@ public class RelatorioController {
     @Autowired
     private ProdutoService produtoService;
 
+    // Relatório geral de serviços finalizados com filtros
     @GetMapping("/servicos-finalizados")
     public ResponseEntity<byte[]> gerarRelatorioServicosFinalizadosFiltrado(
             @RequestParam(required = false) String termo,
@@ -47,31 +49,36 @@ public class RelatorioController {
         Page<ServicoFinalizado> servicosPage =
                 servicoFinalizadoService.buscarServicosFinalizados(termo, inicio, fim, periodo, pageable);
 
-        List<ServicoFinalizado> servicosFiltrados = servicosPage.getContent();
+        List<ServicoFinalizadoDTO> servicosDTO = servicosPage.getContent().stream()
+                .map(ServicoFinalizadoDTO::new) // transforma cada entidade em DTO
+                .collect(Collectors.toList());
 
-        if (servicosFiltrados.isEmpty()) {
-            return ResponseEntity.noContent().build();
+        ByteArrayInputStream pdf = RelatorioServicoPdfGenerator.gerarRelatorio(servicosDTO);
+
+        String nomeArquivo = "relatorio-servicos-finalizados";
+        if (periodo != null && !periodo.isBlank()) {
+            nomeArquivo += "-" + periodo.toLowerCase();
         }
-
-        ByteArrayInputStream pdf = RelatorioServicoPdfGenerator.gerarRelatorio(servicosFiltrados);
+        nomeArquivo += ".pdf";
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=relatorio-servicos-filtrado.pdf")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + nomeArquivo)
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdf.readAllBytes());
     }
 
-
     // Relatório individual do serviço finalizado por ID
     @GetMapping("/servico-finalizado/{id}")
     public ResponseEntity<byte[]> gerarRelatorioUnico(@PathVariable Long id) {
-        Optional<ServicoFinalizado> servico = servicoFinalizadoService.buscarPorId(id);
+        Optional<ServicoFinalizado> servicoOpt = servicoFinalizadoService.buscarPorId(id);
 
-        if (servico.isEmpty()) {
+        if (servicoOpt.isEmpty()) {
             return ResponseEntity.notFound().build(); // 404 Not Found
         }
 
-        ByteArrayInputStream pdf = RelatorioServicoPdfGenerator.gerarRelatorioUnico(servico.get());
+        ServicoFinalizadoDTO servicoDTO = new ServicoFinalizadoDTO(servicoOpt.get());
+
+        ByteArrayInputStream pdf = RelatorioServicoPdfGenerator.gerarRelatorioUnico(servicoDTO);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=relatorio-servico-" + id + ".pdf")

@@ -17,22 +17,28 @@ public class Produto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
     @NotBlank(message = "O nome do produto é obrigatório")
     private String nome;
 
+    @Column
     @NotNull(message = "A quantidade é obrigatória")
     @Min(value = 0, message = "A quantidade não pode ser negativa")
     private int quantidade;
 
+    @Column
     @NotNull(message = "O preço unitário é obrigatório")
     @DecimalMin(value = "0.0", inclusive = false, message = "O preço deve ser maior que zero")
     private BigDecimal precoUnitario;
 
+    @Column
     @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UnidadeProduto> unidades;
 
+    @Column
     @NotBlank(message = "A categoria é obrigatória")
     private String categoria;
 
+    @Column
     private String observacao;
 }

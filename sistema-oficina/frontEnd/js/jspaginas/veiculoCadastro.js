@@ -83,7 +83,12 @@ document.addEventListener("DOMContentLoaded", () => {
     filtrados.forEach((cliente) => {
       const li = document.createElement("li");
       li.textContent = `${cliente.nome} - ${cliente.cpf}`;
-      li.classList.add("cursor-pointer", "p-2", "hover:bg-gray-200");
+      li.classList.add(
+        "cursor-pointer",
+        "p-2",
+        "hover:bg-gray-700",
+        "hover:text-white"
+      );
 
       li.addEventListener("click", () => {
         buscaClienteInput.value = cliente.nome;
@@ -125,6 +130,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  document.getElementById("placa").addEventListener("input", (e) => {
+    e.target.value = e.target.value.toUpperCase();
+  });
   // Validação simples
   function validarFormulario() {
     let valido = true;
@@ -135,6 +143,20 @@ document.addEventListener("DOMContentLoaded", () => {
       valido = false;
     } else {
       document.getElementById("cliente-error").textContent = "";
+    }
+
+    const placaInput = document.getElementById("placa").value.trim();
+
+    if (!placaInput) {
+      document.getElementById("placa-error").textContent =
+        "Preencha a placa do veículo.";
+      valido = false;
+    } else if (placaInput.length !== 7) {
+      document.getElementById("placa-error").textContent =
+        "A placa deve ter exatamente 7 caracteres.";
+      valido = false;
+    } else {
+      document.getElementById("placa-error").textContent = "";
     }
 
     if (!document.getElementById("modelo").value.trim()) {

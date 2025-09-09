@@ -122,6 +122,10 @@
                 >
                   Veículo
                 </th>
+                </th>
+                <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+                  Produtos
+                </th>
                 <th
                   class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider"
                 >
@@ -134,6 +138,61 @@
             </tbody>
           </table>
         </div>
+
+      <!-- Modal de Finalização -->
+      <div id="modalFinalizarServico" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden">
+        <div class="bg-[#1E1E1E] text-white rounded-xl shadow-lg p-6 w-full max-w-md">
+          <h2 class="text-xl font-semibold mb-4 text-orange-500">Finalizar Serviço</h2>
+
+          <!-- Tempo de Garantia -->
+          <label class="block mb-2 font-medium" for="inputValorGarantia">Tempo de Garantia:</label>
+          <div class="flex gap-2">
+            <input
+              type="number"
+              id="inputValorGarantia"
+              class="w-1/2 p-3 border border-gray-600 bg-[#2D2D2D] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+              placeholder="Digite o número"
+              min="1"
+              max="10"
+            />
+            <select
+              id="inputUnidadeGarantia"
+              class="w-1/2 p-3 border border-gray-600 bg-[#2D2D2D] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+            >
+              <option value="mes">Meses</option>
+              <option value="ano">Ano(s)</option>
+            </select>
+          </div>
+
+          <!-- Observações -->
+          <label class="block mt-4 mb-2 font-medium" for="inputDetalhesFinalizacao">Observações (opcional):</label>
+          <textarea
+            id="inputDetalhesFinalizacao"
+            class="w-full p-3 border border-gray-600 bg-[#2D2D2D] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+            placeholder="Digite alguma observação se quiser..."
+            rows="3"
+          ></textarea>
+
+          <!-- Botões -->
+          <div class="flex justify-end gap-2 mt-4">
+            <button
+              id="btnCancelarFinalizacao"
+              class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition"
+            >
+              Cancelar
+            </button>
+            <button
+              id="btnSalvarFinalizacao"
+              class="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 transition"
+            >
+              Finalizar
+            </button>
+          </div>
+        </div>
+      </div>
+
+
+
 
         <div id="paginacao" class="flex justify-center mt-6 space-x-2"></div>
 

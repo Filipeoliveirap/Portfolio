@@ -3,18 +3,21 @@ package com.oficina.backend.relatorio;
 import com.lowagie.text.*;
 import com.lowagie.text.Font;
 import com.lowagie.text.pdf.*;
-import com.oficina.backend.model.ServicoFinalizado;
+import com.oficina.backend.DTO.ProdutoServicoFinalizadoDTO;
+import com.oficina.backend.DTO.ServicoFinalizadoDTO;
 
 import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RelatorioServicoPdfGenerator {
-    private static final DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final DateTimeFormatter formatadorData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    public static ByteArrayInputStream gerarRelatorio(List<ServicoFinalizado> servicosFinalizados) {
+    // Relatório geral
+    public static ByteArrayInputStream gerarRelatorio(List<ServicoFinalizadoDTO> servicosFinalizados) {
         Document document = new Document();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
@@ -28,13 +31,15 @@ public class RelatorioServicoPdfGenerator {
             document.add(cabecalho);
             document.add(Chunk.NEWLINE);
 
-            PdfPTable tabela = new PdfPTable(8); // 8 colunas
+            PdfPTable tabela = new PdfPTable(11); // 11 colunas
             tabela.setWidthPercentage(100);
-            tabela.setWidths(new int[]{1, 3, 2, 2, 2, 3, 3, 4});
+            tabela.setWidths(new int[]{1, 3, 2, 2, 2, 3, 3, 3, 3, 2, 4});
 
-            Font cabecalhoFonte = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
+            Font cabecalhoFonte = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10);
+            String[] colunas = {"ID", "Descrição", "Preço", "Data Início", "Data Finalização",
+                    "Nome Cliente", "CPF Cliente", "Veículo", "Produtos Usados",
+                    "Data Garantia", "Detalhes Finalização"};
 
-            String[] colunas = {"ID", "Descrição", "Preço", "Data Início", "Data Finalização", "CPF Cliente", "Nome Cliente", "Observações"};
             for (String col : colunas) {
                 PdfPCell header = new PdfPCell(new Phrase(col, cabecalhoFonte));
                 header.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -42,17 +47,26 @@ public class RelatorioServicoPdfGenerator {
                 tabela.addCell(header);
             }
 
-            for (ServicoFinalizado s : servicosFinalizados) {
+            for (ServicoFinalizadoDTO s : servicosFinalizados) {
                 tabela.addCell(String.valueOf(s.getId()));
                 tabela.addCell(s.getDescricao() != null ? s.getDescricao() : "");
                 tabela.addCell(s.getPreco() != null ? String.format("R$ %.2f", s.getPreco()) : "");
+                tabela.addCell(s.getDataInicio() != null ? s.getDataInicio().format(formatadorData) : "");
+                tabela.addCell(s.getDataFinalizacao() != null ? s.getDataFinalizacao().format(formatadorData) : "");
+                tabela.addCell(s.getCliente() != null ? s.getCliente().getNome() : "");
+                tabela.addCell(s.getCliente() != null ? s.getCliente().getCpf() : "");
+                tabela.addCell(s.getVeiculo() != null ? s.getVeiculo().getPlaca() : "");
 
-                tabela.addCell(s.getDataInicio() != null ? s.getDataInicio().format(formatador) : "");
-                tabela.addCell(s.getDataFinalizacao() != null ? s.getDataFinalizacao().format(formatador) : "");
+                // produtos usados com quantidade
+                String produtos = s.getQuantidadeProdutosUsados() != null ?
+                        s.getQuantidadeProdutosUsados().stream()
+                                .map(p -> p.getNome() + " (x" + p.getQuantidade() + ")")
+                                .collect(Collectors.joining(", "))
+                        : "";
+                tabela.addCell(produtos);
 
-                tabela.addCell(s.getCpfCliente() != null ? s.getCpfCliente() : "");
-                tabela.addCell(s.getNomeCliente() != null ? s.getNomeCliente() : "");
-                tabela.addCell(s.getObservacoes() != null ? s.getObservacoes() : "");
+                tabela.addCell(s.getDataGarantia() != null ? s.getDataGarantia().format(formatadorData) : "");
+                tabela.addCell(s.getDetalhesFinalizacao() != null ? s.getDetalhesFinalizacao() : "");
             }
 
             document.add(tabela);
@@ -65,7 +79,8 @@ public class RelatorioServicoPdfGenerator {
         return new ByteArrayInputStream(out.toByteArray());
     }
 
-    public static ByteArrayInputStream gerarRelatorioUnico(ServicoFinalizado servico) {
+    // Relatório único
+    public static ByteArrayInputStream gerarRelatorioUnico(ServicoFinalizadoDTO s) {
         Document document = new Document();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
@@ -81,16 +96,30 @@ public class RelatorioServicoPdfGenerator {
 
             Font fonteNormal = FontFactory.getFont(FontFactory.HELVETICA, 12);
 
-            document.add(new Paragraph("ID: " + servico.getId(), fonteNormal));
-            document.add(new Paragraph("Descrição: " + servico.getDescricao(), fonteNormal));
-            document.add(new Paragraph("Preço: " + (servico.getPreco() != null ? String.format("R$ %.2f", servico.getPreco()) : ""), fonteNormal));
+            document.add(new Paragraph("ID: " + s.getId(), fonteNormal));
+            document.add(new Paragraph("Descrição: " + s.getDescricao(), fonteNormal));
+            document.add(new Paragraph("Preço: " + (s.getPreco() != null ? String.format("R$ %.2f", s.getPreco()) : ""), fonteNormal));
+            document.add(new Paragraph("Data Início: " + (s.getDataInicio() != null ? s.getDataInicio().format(formatadorData) : ""), fonteNormal));
+            document.add(new Paragraph("Data Finalização: " + (s.getDataFinalizacao() != null ? s.getDataFinalizacao().format(formatadorData) : ""), fonteNormal));
+            document.add(new Paragraph(
+                    "Nome Cliente: " + (s.getCliente() != null ? s.getCliente().getNome() : ""),
+                    fonteNormal
+            ));
+            document.add(new Paragraph(
+                    "CPF Cliente: " + (s.getCliente() != null ? s.getCliente().getCpf() : ""),
+                    fonteNormal
+            ));
+            document.add(new Paragraph("Veículo: " + (s.getVeiculo() != null ? s.getVeiculo().getPlaca() : ""), fonteNormal));
 
-            document.add(new Paragraph("Data de Início: " + (servico.getDataInicio() != null ? servico.getDataInicio().format(formatador) : ""), fonteNormal));
-            document.add(new Paragraph("Data de Finalização: " + (servico.getDataFinalizacao() != null ? servico.getDataFinalizacao().format(formatador) : ""), fonteNormal));
+            String produtos = s.getQuantidadeProdutosUsados() != null ?
+                    s.getQuantidadeProdutosUsados().stream()
+                            .map(p -> p.getNome() + " (x" + p.getQuantidade() + ")")
+                            .collect(Collectors.joining(", "))
+                    : "";
+            document.add(new Paragraph("Produtos Usados: " + produtos, fonteNormal));
 
-            document.add(new Paragraph("Nome do Cliente: " + (servico.getNomeCliente() != null ? servico.getNomeCliente() : ""), fonteNormal));
-            document.add(new Paragraph("CPF do Cliente: " + (servico.getCpfCliente() != null ? servico.getCpfCliente() : ""), fonteNormal));
-            document.add(new Paragraph("Observações: " + (servico.getObservacoes() != null ? servico.getObservacoes() : ""), fonteNormal));
+            document.add(new Paragraph("Data Garantia: " + (s.getDataGarantia() != null ? s.getDataGarantia().format(formatadorData) : ""), fonteNormal));
+            document.add(new Paragraph("Detalhes Finalização: " + (s.getDetalhesFinalizacao() != null ? s.getDetalhesFinalizacao() : ""), fonteNormal));
 
             document.close();
 

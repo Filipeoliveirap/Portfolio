@@ -66,13 +66,29 @@ public class DashBoardController {
             ServicoResumoDTO resumo = new ServicoResumoDTO();
             resumo.setNomeCliente(s.getNomeCliente());
             resumo.setDescricao(s.getDescricao());
-            resumo.setData(s.getDataFinalizacao().toLocalDate().format(formatter));
+            resumo.setData(s.getDataFinalizacao() != null ? s.getDataFinalizacao().toLocalDate().format(formatter) : "");
             resumo.setTelefone(s.getCliente() != null ? s.getCliente().getTelefone() : "");
             resumo.setValor(s.getPreco());
-            resumo.setDataInicio(s.getDataInicio().toLocalDate().format(formatter));
-            resumo.setObservacoes(s.getObservacoes());
+            resumo.setDataInicio(s.getDataInicio() != null ? s.getDataInicio().toLocalDate().format(formatter) : "");
+            resumo.setDetalhesFinalizacao(s.getDetalhesFinalizacao());
+            resumo.setCpfCliente(s.getCpfCliente());
+            resumo.setVeiculo(s.getVeiculo() != null ? s.getVeiculo().getPlaca() : "");
+
+            // Se quiser listar os produtos usados no resumo
+            if (s.getUnidadesUsadas() != null) {
+                resumo.setProdutosUsados(
+                        s.getUnidadesUsadas().stream()
+                                .map(u -> u.getProduto().getNome()) // ou outro campo do produto
+                                .collect(Collectors.toList())
+                );
+            }
+
+            resumo.setDataGarantia(s.getDataGarantia());
+            resumo.setClausulaGarantia(s.getClausulaGarantia());
+
             return resumo;
         }).collect(Collectors.toList());
+
 
         dto.setUltimosServicos(ultimosDto);
 

@@ -22,6 +22,10 @@ public class UnidadeProduto {
     @Column(nullable = false)
     private StatusUnidade status;
 
+    @ManyToOne
+    @JoinColumn(name = "servico_finalizado_id")
+    private ServicoFinalizado servicoFinalizado;
+
     public UnidadeProduto(Produto produto, StatusUnidade status) {
         this.produto = produto;
         this.status = status;

@@ -18,14 +18,12 @@ public interface ProdutoRepository extends JpaRepository<Produto, Long> {
     Page<Produto> findByStatus(@Param("status") UnidadeProduto.StatusUnidade status, Pageable pageable);
 
 
-    List<Produto> findByQuantidadeLessThan(int quantidade);
+
 
     Page<Produto> findByNomeContainingIgnoreCase(String nome, Pageable pageable);
 
 
     Page<Produto> findByCategoriaContainingIgnoreCase(String categoria, Pageable pageable);
-
-    List<Produto> findByQuantidadeLessThanEqual(int quantidade);
 
 
     @Query("SELECT DISTINCT p FROM Produto p JOIN p.unidades u WHERE LOWER(p.nome) LIKE LOWER(CONCAT('%', :nome, '%')) AND u.status = :status")
@@ -35,5 +33,4 @@ public interface ProdutoRepository extends JpaRepository<Produto, Long> {
     @Query("SELECT DISTINCT p FROM Produto p JOIN p.unidades u WHERE LOWER(p.categoria) LIKE LOWER(CONCAT('%', :categoria, '%')) AND u.status = :status")
     Page<Produto> findByCategoriaContainingIgnoreCaseAndStatus(@Param("categoria") String categoria, @Param("status") StatusUnidade status, Pageable pageable);
 
-    // Removido método findByStatus pois não existe 'status' direto em Produto
 }

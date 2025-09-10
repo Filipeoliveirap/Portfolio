@@ -3,6 +3,7 @@ package com.oficina.backend.controller;
 import com.oficina.backend.DTO.ProdutoDTO;
 import com.oficina.backend.DTO.ProdutoEstoqueDTO;
 import com.oficina.backend.DTO.VendaRequestDTO;
+import com.oficina.backend.model.Produto;
 import com.oficina.backend.model.UnidadeProduto;
 import com.oficina.backend.service.ProdutoService;
 import jakarta.persistence.EntityNotFoundException;
@@ -64,18 +65,7 @@ public class ProdutoController {
         return ResponseEntity.noContent().build();
     }
 
-    // Buscar produtos com estoque baixo
-    @GetMapping("/estoque-baixo")
-    public ResponseEntity<?> buscarPorEstoqueBaixo(@RequestParam int quantidadeLimite) {
-        List<ProdutoDTO> produtos = produtoService.produtosComEstoqueBaixo(quantidadeLimite);
-        if (produtos.isEmpty()) {
-            Map<String, Object> resposta = new HashMap<>();
-            resposta.put("mensagem", "Nenhum produto com estoque abaixo de " + quantidadeLimite);
-            resposta.put("status", 404);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resposta);
-        }
-        return ResponseEntity.ok(produtos);
-    }
+
 
     // Tratamento local para EntityNotFoundException
     @ExceptionHandler(EntityNotFoundException.class)
@@ -126,6 +116,15 @@ public class ProdutoController {
         produtoService.venderProduto(id, vendaDTO.getQuantidadeVendida());
         return ResponseEntity.ok("Venda realizada com sucesso");
     }
+
+    @PatchMapping("/{id}/observacao")
+    public ResponseEntity<ProdutoDTO> atualizarObservacao(
+            @PathVariable Long id,
+            @RequestBody String observacao) {
+        Produto produto = produtoService.atualizarObservacao(id, observacao);
+        return ResponseEntity.ok(new ProdutoDTO(produto));
+    }
+
 
     @GetMapping("/estoque")
     public ResponseEntity<Page<ProdutoEstoqueDTO>> listarProdutosComEstoque(

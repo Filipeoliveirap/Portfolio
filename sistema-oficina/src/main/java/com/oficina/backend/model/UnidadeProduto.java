@@ -22,6 +22,9 @@ public class UnidadeProduto {
     @Column(nullable = false)
     private StatusUnidade status;
 
+    @Column
+    private String observacao;
+
     @ManyToOne
     @JoinColumn(name = "servico_finalizado_id")
     private ServicoFinalizado servicoFinalizado;

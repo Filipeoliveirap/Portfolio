@@ -138,12 +138,31 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
+      
+      dados.content.sort((a, b) => {
+        const ordemStatus = { disponivel: 1, vendido: 2, utilizado: 3 };
+        const statusA = a.status?.toLowerCase() || "disponivel";
+        const statusB = b.status?.toLowerCase() || "disponivel";
+        return (ordemStatus[statusA] || 4) - (ordemStatus[statusB] || 4);
+      });
+
       dados.content.forEach((produto) => {
         const precoUnitarioNum = Number(produto.precoUnitario);
         const precoTotal = (produto.quantidade * precoUnitarioNum).toFixed(2);
 
+        let unidadeId;
+        let observacao;
+
+        if (produto.status?.toLowerCase() === "disponivel") {
+          unidadeId = produto.id;
+          observacao = produto.observacao || "—";
+        } else {
+          unidadeId = produto.unidadeProduto?.id;
+          observacao = produto.unidadeProduto?.observacao || "—";
+        }
+
         const row = document.createElement("tr");
-        row.setAttribute("data-id", produto.id);
+        row.setAttribute("data-id", unidadeId);
 
         row.innerHTML = `
           <td class="px-5 py-3 border-b border-gray-700 text-sm text-white">${
@@ -159,9 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <td class="px-5 py-3 border-b border-gray-700 text-sm text-white">${
             produto.categoria ?? "Não disponível"
           }</td>
-          <td class="px-6 py-4 border-b border-gray-700 text-sm text-white">${
-            produto.observacao || "—"
-          }</td>
+          <td class="px-6 py-4 border-b border-gray-700 text-sm text-white">${observacao}</td>
           <td class="px-5 py-3 border-b border-gray-700 text-sm">
             <span class="
               px-3 py-1 rounded-full text-xs font-semibold
@@ -193,30 +210,12 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="flex items-center space-x-2 justify-center h-full">
               ${
                 produto.status?.toLowerCase() === "disponivel"
-                  ? `
-                <button onclick="editarProduto(${produto.id})" class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-1 px-3 rounded shadow">
-                  <i class="fas fa-edit"></i>
-                </button>
-              `
-                  : ""
+                  ? `<button onclick="editarProduto(${produto.id})" class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-1 px-3 rounded shadow"><i class="fas fa-edit"></i></button>
+                    <button onclick="abrirModalVenda(${produto.id}, ${produto.quantidade}, ${produto.precoUnitario})" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-1 px-3 rounded shadow"><i class="fas fa-dollar-sign"></i></button>
+                    <button onclick="excluirProduto(${produto.id})" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded shadow"><i class="fas fa-trash"></i></button>`
+                  : `<button onclick="abrirModalObservacao(${unidadeId}, '${observacao}')" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded shadow"><i class="fas fa-sticky-note"></i></button>
+                    <button onclick="excluirUnidade(${unidadeId})" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded shadow"><i class="fas fa-trash"></i></button>`
               }
-
-              ${
-                produto.status?.toLowerCase() === "disponivel"
-                  ? `
-                <button onclick="abrirModalVenda(${produto.id}, ${produto.quantidade}, ${produto.precoUnitario})"
-                  class="bg-green-600 hover:bg-green-700 text-white font-semibold py-1 px-3 rounded shadow">
-                  <i class="fas fa-dollar-sign"></i>
-                </button>
-              `
-                  : ""
-              }
-
-              <button onclick="excluirProduto(${
-                produto.id
-              })" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded shadow">
-                <i class="fas fa-trash"></i>
-              </button>
             </div>
           </td>
         `;
@@ -355,6 +354,51 @@ document.addEventListener("DOMContentLoaded", () => {
   window.abrirModalVenda = abrirModalVenda;
   window.fecharModalVenda = fecharModalVenda;
   window.confirmarVenda = confirmarVenda;
+
+  let produtoObservacaoId = null;
+
+  function abrirModalObservacao(id, observacaoAtual) {
+    produtoObservacaoId = id;
+    document.getElementById("inputObservacao").value = observacaoAtual || "";
+    document.getElementById("modalObservacao").classList.remove("hidden");
+  }
+
+  function fecharModalObservacao() {
+    document.getElementById("modalObservacao").classList.add("hidden");
+  }
+
+  async function salvarObservacao() {
+    const novaObservacao = document.getElementById("inputObservacao").value;
+
+    try {
+      const response = await fetch(
+        `http://localhost:8080/unidades/${produtoObservacaoId}/observacao`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ observacao: novaObservacao }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Erro ao atualizar observação");
+
+      await alertaSucesso("Observação atualizada com sucesso!");
+      fecharModalObservacao();
+
+      carregarProdutos(
+        paginaAtual,
+        filtroAtual,
+        tipoFiltroAtual,
+        statusFiltroSelect.value
+      );
+    } catch (err) {
+      await alertaErro("Erro ao atualizar observação", err.message);
+    }
+  }
+
+  window.abrirModalObservacao = abrirModalObservacao;
+  window.fecharModalObservacao = fecharModalObservacao;
+  window.salvarObservacao = salvarObservacao;
 
   carregarProdutos(
     paginaAtual,

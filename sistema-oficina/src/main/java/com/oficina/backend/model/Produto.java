@@ -24,6 +24,7 @@ public class Produto {
     @Column
     @NotNull(message = "A quantidade é obrigatória")
     @Min(value = 0, message = "A quantidade não pode ser negativa")
+    @Transient
     private int quantidade;
 
     @Column
@@ -31,7 +32,6 @@ public class Produto {
     @DecimalMin(value = "0.0", inclusive = false, message = "O preço deve ser maior que zero")
     private BigDecimal precoUnitario;
 
-    @Column
     @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UnidadeProduto> unidades;
 

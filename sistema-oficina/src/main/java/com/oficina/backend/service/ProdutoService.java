@@ -314,15 +314,7 @@ public class ProdutoService {
         return produtos.map(this::toDTO);
     }
 
-    // Produtos com estoque abaixo do limite definido (sem paginação)
-    public List<ProdutoDTO> produtosComEstoqueBaixo(int quantidadeLimite) {
-        List<Produto> produtos = produtoRepository.findByQuantidadeLessThan(quantidadeLimite);
-        return produtos.stream().map(this::toDTO).collect(Collectors.toList());
-    }
 
-    public List<Produto> buscarPorEstoqueBaixo(int quantidadeLimite) {
-        return produtoRepository.findByQuantidadeLessThanEqual(quantidadeLimite);
-    }
 
     @Transactional
     public void alterarStatus(Long produtoId, UnidadeProduto.StatusUnidade statusAtual, UnidadeProduto.StatusUnidade novoStatus) {
@@ -336,6 +328,34 @@ public class ProdutoService {
         unidadesParaAtualizar.forEach(unidade -> unidade.setStatus(novoStatus));
 
         unidadeProdutoRepository.saveAll(unidadesParaAtualizar);
+    }
+
+    public int contarDisponiveis(Long produtoId) {
+        Produto produto = produtoRepository.findById(produtoId)
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+
+        return (int) produto.getUnidades().stream()
+                .filter(unidade -> unidade.getStatus() == UnidadeProduto.StatusUnidade.DISPONIVEL)
+                .count();
+    }
+
+    public int contarVendidos(Long produtoId) {
+        Produto produto = produtoRepository.findById(produtoId)
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+
+        return (int) produto.getUnidades().stream()
+                .filter(unidade -> unidade.getStatus() == UnidadeProduto.StatusUnidade.VENDIDO)
+                .count();
+
+    }
+
+    public int contarUtilizados(Long produtoId) {
+        Produto produto = produtoRepository.findById(produtoId)
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+
+        return (int) produto.getUnidades().stream()
+                .filter(unidade -> unidade.getStatus() == UnidadeProduto.StatusUnidade.UTILIZADO)
+                .count();
     }
 
 
@@ -357,6 +377,15 @@ public class ProdutoService {
         unidades.forEach(u -> u.setStatus(statusEnum));
         unidadeProdutoRepository.saveAll(unidades);
     }
+
+    public Produto atualizarObservacao(Long id, String observacao) {
+        Produto produto = produtoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+
+        produto.setObservacao(observacao);
+        return produtoRepository.save(produto);
+    }
+
 
     @Transactional
     public void venderProduto(Long produtoId, int quantidadeVendida) {
@@ -389,25 +418,67 @@ public class ProdutoService {
         List<ProdutoEstoqueDTO> resultado = new ArrayList<>();
 
         for (Produto produto : paginaProdutos.getContent()) {
-            boolean temDisponivel = produto.getUnidades().stream().anyMatch(u -> u.getStatus() == UnidadeProduto.StatusUnidade.DISPONIVEL);
-            boolean temVendido = produto.getUnidades().stream().anyMatch(u -> u.getStatus() == UnidadeProduto.StatusUnidade.VENDIDO);
-            boolean temUtilizado = produto.getUnidades().stream().anyMatch(u -> u.getStatus() == UnidadeProduto.StatusUnidade.UTILIZADO);
+            // Filtra pelo status, se tiver
+            List<UnidadeProduto> unidadesFiltradas = produto.getUnidades().stream()
+                    .filter(u -> statusFiltro == null || statusFiltro.isEmpty()
+                            || u.getStatus().name().equalsIgnoreCase(statusFiltro))
+                    .sorted((u1, u2) -> Long.compare(u1.getId(), u2.getId()))
+                    .collect(Collectors.toList());
 
-            if ((statusFiltro == null || statusFiltro.isEmpty() || statusFiltro.equalsIgnoreCase("disponivel")) && temDisponivel) {
-                resultado.add(toEstoqueDTOFiltradoPorStatus(produto, UnidadeProduto.StatusUnidade.DISPONIVEL));
+            if (unidadesFiltradas.isEmpty()) continue;
+
+            // Agrupar por status consecutivo
+            UnidadeProduto.StatusUnidade statusAtual = unidadesFiltradas.get(0).getStatus();
+            List<UnidadeProduto> grupo = new ArrayList<>();
+
+            for (UnidadeProduto unidade : unidadesFiltradas) {
+                if (unidade.getStatus() == statusAtual) {
+                    grupo.add(unidade);
+                } else {
+                    // cria DTO para o grupo atual
+                    resultado.add(criarDTOProdutoPorGrupo(produto, grupo, statusAtual));
+                    // inicia novo grupo
+                    grupo = new ArrayList<>();
+                    grupo.add(unidade);
+                    statusAtual = unidade.getStatus();
+                }
             }
-
-            if ((statusFiltro == null || statusFiltro.isEmpty() || statusFiltro.equalsIgnoreCase("vendido")) && temVendido) {
-                resultado.add(toEstoqueDTOFiltradoPorStatus(produto, UnidadeProduto.StatusUnidade.VENDIDO));
-            }
-
-            if ((statusFiltro == null || statusFiltro.isEmpty() || statusFiltro.equalsIgnoreCase("utilizado")) && temUtilizado) {
-                resultado.add(toEstoqueDTOFiltradoPorStatus(produto, UnidadeProduto.StatusUnidade.UTILIZADO));
+            // adiciona o último grupo
+            if (!grupo.isEmpty()) {
+                resultado.add(criarDTOProdutoPorGrupo(produto, grupo, statusAtual));
             }
         }
 
         return new PageImpl<>(resultado, pageable, resultado.size());
     }
+
+    // método auxiliar para criar DTO de um grupo de unidades
+    private ProdutoEstoqueDTO criarDTOProdutoPorGrupo(Produto produto, List<UnidadeProduto> grupo, UnidadeProduto.StatusUnidade status) {
+        ProdutoEstoqueDTO dto = new ProdutoEstoqueDTO();
+        dto.setId(produto.getId());
+        dto.setNome(produto.getNome());
+        dto.setCategoria(produto.getCategoria());
+        dto.setObservacao(produto.getObservacao());
+        dto.setPrecoUnitario(produto.getPrecoUnitario());
+        dto.setStatus(status.name().toLowerCase());
+
+        // Quantidade do grupo
+        dto.setQuantidade(grupo.size());
+
+        if (status == UnidadeProduto.StatusUnidade.VENDIDO) {
+            dto.setQuantidadeVendida(grupo.size());
+            dto.setQuantidadeUtilizada(0);
+        } else if (status == UnidadeProduto.StatusUnidade.UTILIZADO) {
+            dto.setQuantidadeUtilizada(grupo.size());
+            dto.setQuantidadeVendida(0);
+        } else {
+            dto.setQuantidadeVendida(0);
+            dto.setQuantidadeUtilizada(0);
+        }
+
+        return dto;
+    }
+
 
 
 

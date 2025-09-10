@@ -86,22 +86,4 @@ public class RelatorioController {
                 .body(pdf.readAllBytes());
     }
 
-    // Relatório de produtos com estoque baixo
-    @GetMapping("/produtos-estoque-baixo")
-    public ResponseEntity<byte[]> gerarRelatorioProdutosEstoqueBaixo(
-            @RequestParam(defaultValue = "5") int limite
-    ) {
-        List<Produto> produtos = produtoService.buscarPorEstoqueBaixo(limite);
-
-        if (produtos.isEmpty()) {
-            return ResponseEntity.noContent().build(); // 204 No Content
-        }
-
-        ByteArrayInputStream pdf = RelatorioProdutoPdfGenerator.gerarRelatorio(produtos);
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=relatorio-produtos-estoque-baixo.pdf")
-                .contentType(MediaType.APPLICATION_PDF)
-                .body(pdf.readAllBytes());
-    }
 }

@@ -80,15 +80,17 @@ document.addEventListener("DOMContentLoaded", () => {
       }</td>
       <td class="px-5 py-3 border-b border-gray-700 text-white">${produtosHtml}</td>
       <td class="px-5 py-3 border-b border-gray-700 ">
-        <button onclick="editarServico(${
-          servico.id
-        })" class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-1 px-3 rounded shadow"><i class="fas fa-edit"></i></button>
-        <button onclick="excluirServico(${
-          servico.id
-        })" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded shadow"><i class="fas fa-trash"></i></button>
-        <button onclick="finalizarServico(${
-          servico.id
-        })" class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-1 px-3 rounded shadow mt-1"><i class="fas fa-check"></i></button>
+        <div class="flex gap-2">
+          <button onclick="editarServico(${
+            servico.id
+          })" class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-1 px-3 rounded shadow"><i class="fas fa-edit"></i></button>
+          <button onclick="excluirServico(${
+            servico.id
+          })" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded shadow"><i class="fas fa-trash"></i></button>
+          <button onclick="finalizarServico(${
+            servico.id
+          })" class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-1 px-3 rounded shadow "><i class="fas fa-check"></i></button>
+        </div>
       </td>
     `;
       tabelaServicos.appendChild(tr);

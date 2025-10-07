@@ -1,7 +1,0 @@
-CREATE TABLE customer_order (
-    id BIGSERIAL PRIMARY KEY,
-    customer_name VARCHAR(100) NOT NULL,
-    status VARCHAR(20) NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    total DECIMAL(10, 2) NOT NULL
-);

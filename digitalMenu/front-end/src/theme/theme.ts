@@ -1,4 +1,3 @@
-
 export const theme = {
   colors: {
     primary: "#39C5BB",
@@ -32,7 +31,19 @@ export const theme = {
     xl: 24,
   },
   shadow: {
-    sm: { shadowColor: "#000", shadowOpacity: 0.08, shadowRadius: 3, shadowOffset: { width: 0, height: 1 }, elevation: 1 },
-    md: { shadowColor: "#000", shadowOpacity: 0.08, shadowRadius: 18, shadowOffset: { width: 0, height: 6 }, elevation: 6 },
+    sm: {
+      shadowColor: "#000",
+      shadowOpacity: 0.08,
+      shadowRadius: 3,
+      shadowOffset: { width: 0, height: 1 },
+      elevation: 1,
+    },
+    md: {
+      shadowColor: "#000",
+      shadowOpacity: 0.08,
+      shadowRadius: 18,
+      shadowOffset: { width: 0, height: 6 },
+      elevation: 6,
+    },
   },
 };

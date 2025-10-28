@@ -27,7 +27,7 @@ export default function Login() {
             placeholderTextColor={theme.colors.placeholder}
             autoCapitalize="none"
             value={email}
-            onChangeText={(text) => setEmail(text)}
+            onChangeText={(e) => setEmail(e)}
           />
           <MaterialIcons name="email" size={20} color={theme.colors.primary} />
         </View>
@@ -39,11 +39,11 @@ export default function Login() {
             placeholderTextColor={theme.colors.placeholder}
             secureTextEntry={true}
             value={password}
-            onChangeText={(text) => setPassword(text)}
+            onChangeText={(e) => setPassword(e)}
           />
           <MaterialIcons name="lock" size={20} color={theme.colors.primary} />
         </View>
-      <Text style={styles.textMid}>Esqueceu sua senha ?</Text>
+        <Text style={styles.textMid}>Esqueceu sua senha ?</Text>
       </View>
       <View style={styles.boxBottom}>
         <TouchableOpacity style={styles.button} onPress={handleLoginPress}>
@@ -52,10 +52,11 @@ export default function Login() {
       </View>
       <View style={styles.bottomTextContainer}>
         <Text style={styles.textBottom}>Não tem conta? </Text>
-        <TouchableOpacity onPress={() => console.log("Navegar para criar conta")}>
+        <TouchableOpacity
+          onPress={() => console.log("Navegar para criar conta")}
+        >
           <Text style={styles.textBottomLink}>Criar agora!</Text>
         </TouchableOpacity>
-
       </View>
     </View>
   );
